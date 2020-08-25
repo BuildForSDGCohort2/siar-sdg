@@ -4,6 +4,7 @@ import LoginForm from "./components/login";
 import Dashboard from "./components/dashboard";
 import NotFound from "./components/notfound";
 import Home from "./components/home";
+
 class CustomRouter extends React.Component {
   constructor(props) {
     super(props);
@@ -14,8 +15,8 @@ class CustomRouter extends React.Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/signin" component={LoginForm} />
-          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/signin/" component={LoginForm} />
+          <Route path="/dashboard/" component={Dashboard} />
           <Route component={NotFound} />
         </Switch>
       </Router>
