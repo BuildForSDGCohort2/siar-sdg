@@ -52,7 +52,6 @@ class LoginForm extends React.Component {
           <form
             className="col-md-4 col-lg-4 col-xl-4 offset-md-4 offset-lg-4 offset-xl-4"
             onSubmit={this.handleSubmit}
-            method="post"
           >
             <input
               className="form-control my-2"

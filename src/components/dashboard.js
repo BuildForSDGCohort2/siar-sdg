@@ -49,7 +49,9 @@ class Dashboard extends React.Component {
           {this.state.clickTarget == "none" ? (
             <>
               <div className="bg-primary text-white py-4 px-4 text-right">
-                <span className="text-white px-5">{this.props.user}</span>
+                <span className="text-white px-5">
+                  {this.props.user.username}
+                </span>
                 <button
                   className="btn btn-primary border-white text-white"
                   data-toggle="modal"
