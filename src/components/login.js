@@ -14,7 +14,8 @@ class LoginForm extends React.Component {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
     let body = { username: username, password: password };
-    fetch(config.api_url + "/signin/", {
+    console.log("body: ", body);
+    fetch(config.api_url + "/auth/", {
       method: "post",
       body: JSON.stringify(body),
     })
