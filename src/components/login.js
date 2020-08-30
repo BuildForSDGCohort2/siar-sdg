@@ -51,7 +51,7 @@ class LoginForm extends React.Component {
       return (
         <div>
           {this.state.feedback !== null ? (
-            <span className="alert-danger">{this.state.feedback}</span>
+            <div className="alert-danger my-2">{this.state.feedback}</div>
           ) : null}
           <img src={logo} className="App-logo" alt="Siar logo" />
           <p></p>

@@ -4,19 +4,23 @@ import UserItem from "./user_item";
 class UserList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { signout: false, authenticated: props.authenticated };
+    this.state = {
+      currentUser: props.currentUser,
+      authenticated: props.authenticated,
+    };
     this.handleSignout = this.handleSignout.bind(this);
   }
   handleSignout(e) {
     e.preventDefault();
-    this.setState({ signout: true }, () => {
-      if (this.state.signout) this.props.history.push("/signin");
-    });
+    this.setState({ authententicated: false });
   }
   render() {
     return (
       <div>
         <div className="bg-primary text-white py-4 px-4 text-right">
+          <span className="text-white px-5">
+            {this.state.currentUser.username}
+          </span>
           <button
             className="btn btn-primary border-white text-white"
             data-toggle="modal"
@@ -60,7 +64,7 @@ class UserList extends React.Component {
                 <form onSubmit={this.handleSignout}>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary mx-2"
                     data-dismiss="modal"
                   >
                     Cancel

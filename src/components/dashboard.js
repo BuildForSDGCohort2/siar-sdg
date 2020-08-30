@@ -106,7 +106,11 @@ class Dashboard extends React.Component {
               </div>
             </>
           ) : this.state.clickTarget == "users" ? (
-            <UserList users={this.state.users} />
+            <UserList
+              users={this.state.users}
+              currentUser={this.state.currentUser}
+              authenticated={this.state.authenticated}
+            />
           ) : null}
           <div
             className="modal fade"
