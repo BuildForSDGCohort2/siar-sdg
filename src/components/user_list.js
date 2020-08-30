@@ -1,5 +1,6 @@
 import React from "react";
 import UserItem from "./user_item";
+import UserForm from "./user_form";
 
 class UserList extends React.Component {
   constructor(props) {
@@ -8,9 +9,19 @@ class UserList extends React.Component {
       currentUser: props.currentUser,
       authenticated: props.authenticated,
       filteredUsers: props.users,
+      showForm: false,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleNewUser = this.handleNewUser.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+  }
+  handleCancel(state) {
+    this.setState({ showForm: !state });
+  }
+  handleNewUser(e) {
+    e.preventDefault();
+    this.setState({ showForm: true });
   }
   handleSearch(e) {
     e.preventDefault();
@@ -39,28 +50,42 @@ class UserList extends React.Component {
             Sign Out
           </button>
         </div>
-        <div className="col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-          <input
-            type="text"
-            className="form-control col-md-8 col-lg-8 col-xl-8  offset-md-2 offset-lg-2 offset-xl-2 my-5"
-            id="search"
-            name="search"
-            placeholder="search"
-            onChange={this.handleSearch}
+        {this.state.showForm ? (
+          <UserForm
+            currentUser={this.state.currentUser}
+            onCancelForm={(state) => this.handleCancel(state)}
           />
-          <button className="btn btn-success col-md-2 col-lg-2 col-xl-2">
-            Add User
-          </button>
-        </div>
-        <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-          {this.state.filteredUsers.length > 0 ? (
-            this.state.filteredUsers.map((u) => {
-              return <UserItem avatar={u.avatar} name={u.name} key={u.id} />;
-            })
-          ) : (
-            <span className="my-2 text-center">No Records Matched</span>
-          )}
-        </div>
+        ) : (
+          <>
+            <div className="col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
+              <input
+                type="text"
+                className="form-control col-md-8 col-lg-8 col-xl-8  offset-md-2 offset-lg-2 offset-xl-2 my-5"
+                id="search"
+                name="search"
+                placeholder="search"
+                onChange={this.handleSearch}
+              />
+              <button
+                className="btn btn-success col-md-2 col-lg-2 col-xl-2"
+                onClick={this.handleNewUser}
+              >
+                Add User
+              </button>
+            </div>
+            <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
+              {this.state.filteredUsers.length > 0 ? (
+                this.state.filteredUsers.map((u) => {
+                  return (
+                    <UserItem avatar={u.avatar} name={u.name} key={u.id} />
+                  );
+                })
+              ) : (
+                <span className="my-2 text-center">No Records Matched</span>
+              )}
+            </div>
+          </>
+        )}
         <div
           className="modal fade"
           id="signoutDialog"

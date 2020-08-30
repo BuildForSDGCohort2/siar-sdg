@@ -7,7 +7,7 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      authenticated: true,
+      authenticated: props.authenticated,
       currentUser: props.user,
       users: [],
       clickTarget: "none",
