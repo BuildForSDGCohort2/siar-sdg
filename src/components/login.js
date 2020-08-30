@@ -6,12 +6,9 @@ import Dashboard from "./dashboard";
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      authenticated: true,
-      user: { username: "admin" },
-      feedback: null,
-    };
+    this.state = { authenticated: false, user: null, feedback: null };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.signin = this.signin.bind(this);
   }
 
   handleSubmit(event) {
@@ -20,6 +17,10 @@ class LoginForm extends React.Component {
     let password = document.getElementById("password").value;
     let body = { username: username, password: password, btnLogin: "login" };
     console.log("body: ", body);
+    this.signin(body);
+    // this.setState({ authenticated: false, user: body }, () => {});
+  }
+  signin(body) {
     fetch(config.api_url + "/auth/", {
       method: "post",
       headers: {
@@ -42,7 +43,6 @@ class LoginForm extends React.Component {
         this.setState({ feedback: "An error occurred!" });
       });
   }
-
   render() {
     if (this.state.authenticated)
       return (

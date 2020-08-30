@@ -3,6 +3,8 @@ import React from "react";
 import logo from "../images/avatar.jpg";
 import config from "../config.json";
 import Dashboard from "./dashboard";
+import { Spinner } from "react-bootstrap";
+
 class UserForm extends React.Component {
   constructor(props) {
     super(props);
@@ -10,6 +12,7 @@ class UserForm extends React.Component {
       authenticated: true,
       user: props.currentUser,
       feedback: null,
+      isLoading: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -20,6 +23,7 @@ class UserForm extends React.Component {
   }
   handleSubmit(event) {
     event.preventDefault();
+    this.setState({ isLoading: true });
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
     let first_name = document.getElementById("first_name").value;
@@ -51,6 +55,7 @@ class UserForm extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
+        this.setState({ isLoading: false });
         console.log("response: ", response);
         //   if (response.success == 0) {
         //     let user = response.user;
@@ -62,6 +67,7 @@ class UserForm extends React.Component {
       .catch((error) => {
         console.error("error: ", error);
         this.setState({ feedback: "An error occurred!" });
+        this.setState({ isLoading: false });
       });
   }
   render() {
@@ -136,13 +142,19 @@ class UserForm extends React.Component {
             type="password"
           />
           <div className="row form-group offset-md-1 offset-xl-1 offset-lg-1 my-3 px-2">
-            <input
-              type="submit"
-              name="btnRegister"
-              id="btnRegister"
-              className="btn btn-primary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
-              value="ADD USER"
-            />
+            {this.state.isLoading ? (
+              <button className="btn btn-primary disabled my-2 mx-2 col-md-3 col-lg-3 col-xl-3">
+                <Spinner animation="border" variant="light" />
+              </button>
+            ) : (
+              <input
+                type="submit"
+                name="btnRegister"
+                id="btnRegister"
+                className="btn btn-primary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
+                value="ADD USER"
+              />
+            )}
             <span className="col-md-4 col-lg-4 col-xl-4"></span>
             <input
               onClick={this.handleCancel}

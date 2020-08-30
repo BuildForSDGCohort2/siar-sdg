@@ -146,7 +146,11 @@ class Dashboard extends React.Component {
                   >
                     Cancel
                   </button>
-                  <button type="button" className="btn btn-primary">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={this.handleSignout}
+                  >
                     Sign Out
                   </button>
                 </div>
