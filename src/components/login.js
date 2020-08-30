@@ -6,7 +6,7 @@ import Dashboard from "./dashboard";
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { authenticated: false, user: null };
+    this.state = { authenticated: false, user: null, feedback: null };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -29,10 +29,13 @@ class LoginForm extends React.Component {
         if (response.success == 0) {
           let user = response.user;
           this.setState({ authenticated: true, user: user }, () => {});
+        } else {
+          this.setState({ feedback: response.msg });
         }
       })
       .catch((error) => {
         console.error("error: ", error);
+        this.setState({ feedback: "An error occurred!" });
       });
   }
 
@@ -47,6 +50,9 @@ class LoginForm extends React.Component {
     else {
       return (
         <div>
+          {this.state.feedback !== null ? (
+            <span className="alert-danger">{this.state.feedback}</span>
+          ) : null}
           <img src={logo} className="App-logo" alt="Siar logo" />
           <p></p>
           <form

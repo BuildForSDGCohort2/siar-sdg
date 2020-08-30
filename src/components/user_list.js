@@ -27,7 +27,7 @@ class UserList extends React.Component {
         </div>
         <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
           {this.props.users.forEach((u) => {
-            return <UserItem avatar={u.avatar} name={u.name} />;
+            return <UserItem avatar={u.avatar} name={u.name} key={u.id} />;
           })}
         </div>
         <div

@@ -17,7 +17,7 @@ class Dashboard extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
   handleClick(e) {
-    console.log("test: ", e.target);
+    console.log("test: ", e.target.id);
     let id = e.target.id;
     this.setState({ clickTarget: id }, () => {
       console.log("result: ", this.state.clickTarget);
@@ -25,18 +25,16 @@ class Dashboard extends React.Component {
   }
   handleSignout(e) {
     e.preventDefault();
-    this.setState({ signout: true }, () => {
-      if (this.state.signout) this.props.history.push("/signin");
-    });
+    this.setState({ authenticated: false });
   }
 
   componentDidMount() {
     let users = [
-      { name: "Landry Kapela", avatar: avatar },
-      { name: "Tristan Landry", avatar: avatar },
-      { name: "Melanie Adanna", avatar: avatar },
-      { name: "Neema Nyanda", avatar: avatar },
-      { name: "Maureen Buyegi", avatar: avatar },
+      { id: 1, name: "Landry Kapela", avatar: avatar },
+      { id: 3, name: "Tristan Landry", avatar: avatar },
+      { id: 5, name: "Melanie Adanna", avatar: avatar },
+      { id: 2, name: "Neema Nyanda", avatar: avatar },
+      { id: 4, name: "Maureen Buyegi", avatar: avatar },
     ];
     this.setState({ users: users, authenticated: this.props.authenticated });
   }
@@ -139,7 +137,7 @@ class Dashboard extends React.Component {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary mx-2"
                     data-dismiss="modal"
                   >
                     Cancel
