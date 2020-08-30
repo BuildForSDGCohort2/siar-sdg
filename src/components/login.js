@@ -14,10 +14,13 @@ class LoginForm extends React.Component {
     event.preventDefault();
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
-    let body = { username: username, password: password };
+    let body = { username: username, password: password, btnLogin: "login" };
     console.log("body: ", body);
     fetch(config.api_url + "/auth/", {
       method: "post",
+      headers: {
+        "Content-type": "application/json",
+      },
       body: JSON.stringify(body),
     })
       .then((res) => res.json())
