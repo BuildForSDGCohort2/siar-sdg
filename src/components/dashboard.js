@@ -29,6 +29,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
+    if(this.props.user)
     let isAdmin = this.props.user.username === "admin";
     let users = [
       { id: 1, name: "Landry Kapela", avatar: avatar },
