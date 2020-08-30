@@ -15,7 +15,6 @@ class CustomRouter extends React.Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/signin/" component={LoginForm} />
           <Route path="/dashboard/" component={Dashboard} />
           <Route component={NotFound} />
         </Switch>

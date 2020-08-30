@@ -1,14 +1,15 @@
 import React from "react";
 import UserList from "./user_list";
 import avatar from "../images/avatar.jpg";
-import { useAuth0 } from "@auth0/auth0-react";
+import LoginForm from "./login";
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       signout: false,
-      authenticated: useAuth0,
+      authenticated: props.authenticated,
+      currentUser: props.user,
       users: [],
       clickTarget: "none",
     };
@@ -40,115 +41,117 @@ class Dashboard extends React.Component {
     this.setState({ users: users, authenticated: this.props.authenticated });
   }
   render() {
-    if (!this.state.authenticated) this.props.history.push("/signin");
-    // window.location.pathname = "/dashboard";
-    return (
-      <div>
-        {this.state.clickTarget == "none" ? (
-          <>
-            <div className="bg-primary text-white py-4 px-4 text-right">
-              <span className="text-white px-5">{this.props.user}</span>
-              <button
-                className="btn btn-primary border-white text-white"
-                data-toggle="modal"
-                data-target="#signoutDialog"
-              >
-                Sign Out
-              </button>
-            </div>
-            <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-              <div
-                className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
-                id="users"
-                onClick={(event) => this.handleClick(event)}
-              >
-                <i id="users" className="material-icons display-4">
-                  people
-                </i>
-                <br />
-                <span className="dispaly-4 my-2">Users</span>
-              </div>
-              <div
-                className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
-                id="files"
-                onClick={(event) => this.handleClick(event)}
-              >
-                <i id="files" className="material-icons display-4">
-                  insert_drive_file
-                </i>
-                <br />
-                <span className="dispaly-4">Files</span>
-              </div>
-              <div
-                className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
-                id="reports"
-                onClick={(event) => this.handleClick(event)}
-              >
-                <i id="reports" className="material-icons display-4">
-                  assessment
-                </i>
-                <br />
-                <span className="dispaly-4">Reports</span>
-              </div>
-              <div
-                className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
-                id="settings"
-                onClick={(event) => this.handleClick(event)}
-              >
-                <i id="settings" className="material-icons display-4">
-                  settings
-                </i>
-                <br />
-                <span className="dispaly-4">Settings</span>
-              </div>
-            </div>
-          </>
-        ) : this.state.clickTarget == "users" ? (
-          <UserList users={this.state.users} />
-        ) : null}
-        <div
-          className="modal fade"
-          id="signoutDialog"
-          tabIndex="-1"
-          role="dialog"
-          aria-labelledby="signoutDialogLabel"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="signoutDialogLabel">
-                  Confirm Signout
-                </h5>
+    if (!this.state.authenticated) {
+      return <LoginForm />;
+    } else {
+      return (
+        <div>
+          {this.state.clickTarget == "none" ? (
+            <>
+              <div className="bg-primary text-white py-4 px-4 text-right">
+                <span className="text-white px-5">{this.props.user}</span>
                 <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
+                  className="btn btn-primary border-white text-white"
+                  data-toggle="modal"
+                  data-target="#signoutDialog"
                 >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                Are you sure you want to sign out now?
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button type="button" className="btn btn-primary">
                   Sign Out
                 </button>
+              </div>
+              <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
+                <div
+                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  id="users"
+                  onClick={(event) => this.handleClick(event)}
+                >
+                  <i id="users" className="material-icons display-4">
+                    people
+                  </i>
+                  <br />
+                  <span className="dispaly-4 my-2">Users</span>
+                </div>
+                <div
+                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  id="files"
+                  onClick={(event) => this.handleClick(event)}
+                >
+                  <i id="files" className="material-icons display-4">
+                    insert_drive_file
+                  </i>
+                  <br />
+                  <span className="dispaly-4">Files</span>
+                </div>
+                <div
+                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  id="reports"
+                  onClick={(event) => this.handleClick(event)}
+                >
+                  <i id="reports" className="material-icons display-4">
+                    assessment
+                  </i>
+                  <br />
+                  <span className="dispaly-4">Reports</span>
+                </div>
+                <div
+                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  id="settings"
+                  onClick={(event) => this.handleClick(event)}
+                >
+                  <i id="settings" className="material-icons display-4">
+                    settings
+                  </i>
+                  <br />
+                  <span className="dispaly-4">Settings</span>
+                </div>
+              </div>
+            </>
+          ) : this.state.clickTarget == "users" ? (
+            <UserList users={this.state.users} />
+          ) : null}
+          <div
+            className="modal fade"
+            id="signoutDialog"
+            tabIndex="-1"
+            role="dialog"
+            aria-labelledby="signoutDialogLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="signoutDialogLabel">
+                    Confirm Signout
+                  </h5>
+                  <button
+                    type="button"
+                    className="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  Are you sure you want to sign out now?
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button type="button" className="btn btn-primary">
+                    Sign Out
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 export default Dashboard;

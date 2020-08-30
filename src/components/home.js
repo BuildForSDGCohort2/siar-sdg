@@ -14,7 +14,7 @@ class Home extends React.Component {
     this.setState({ clicked: true });
   }
   render() {
-    if (this.state.clicked) return <LoginForm />;
+    if (this.state.clicked) return <Dashboard />;
     else {
       return (
         <div className="App">
