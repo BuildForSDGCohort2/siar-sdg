@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../images/siar_logo.png";
+import dino from "../images/dino.png";
 
 class NotFound extends React.Component {
   constructor(props) {
@@ -9,8 +9,8 @@ class NotFound extends React.Component {
   render() {
     return (
       <div>
-        <img src={logo} className="App-logo" alt="Siar logo" />
-        <h1>404: Page Not Found</h1>
+        <img src={dino} className="dino" alt="Page not found" />
+        <h1 className="my-3 ">404: Page Not Found</h1>
       </div>
     );
   }

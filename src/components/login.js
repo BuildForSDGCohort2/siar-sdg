@@ -1,23 +1,38 @@
 import React from "react";
 
 import logo from "../images/siar_logo.png";
-import Dashboard from "./dashboard";
+import config from "../config.json";
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { clicked: false };
+    this.state = { clicked: false, user: null };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    this.setState({ clicked: true }, () => {
-      if (this.state.clicked) this.props.history.push("/dashboard");
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    let body = { username: username, password: password };
+    fetch(config.api_url + "/signin/", {
+      method: "post",
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        console.log("response: ", response);
+      })
+      .catch((error) => {
+        console.error("error: ", error);
+      });
+    this.setState({ clicked: true, user: username }, () => {
+      if (this.state.clicked) {
+        // window.location.pathname = "/dashboard";
+      }
     });
   }
 
   render() {
-    // if (this.state.clicked) return <Dashboard />;
     return (
       <div>
         <img src={logo} className="App-logo" alt="Siar logo" />
@@ -25,12 +40,13 @@ class LoginForm extends React.Component {
         <form
           className="col-md-4 col-lg-4 col-xl-4 offset-md-4 offset-lg-4 offset-xl-4"
           onSubmit={this.handleSubmit}
+          method="post"
         >
           <input
             className="form-control my-2"
-            id="userid"
+            id="username"
             placeholder="Enter ID"
-            name="userid"
+            name="username"
             type="text"
             required
           />
@@ -43,9 +59,9 @@ class LoginForm extends React.Component {
           />
           <input
             type="submit"
-            name="submit"
-            id="submit"
-            class="form-control btn-primary btn my-2"
+            name="btnLogin"
+            id="btnLogin"
+            className="form-control btn-primary btn my-2"
             value="Login"
           />
         </form>

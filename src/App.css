@@ -3,7 +3,8 @@
   color: #000000;
 }
 
-.App-logo {
+.App-logo,
+.dino {
   height: 30vmin;
   pointer-events: none;
   margin: 2em;
