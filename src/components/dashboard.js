@@ -9,6 +9,7 @@ class Dashboard extends React.Component {
     this.state = {
       authenticated: props.authenticated,
       currentUser: props.user,
+      isAdmin: false,
       users: [],
       clickTarget: "none",
     };
@@ -28,7 +29,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    console.log("user: ", this.props.user);
+    let isAdmin = this.props.user.username === "admin";
     let users = [
       { id: 1, name: "Landry Kapela", avatar: avatar },
       { id: 3, name: "Tristan Landry", avatar: avatar },
@@ -36,7 +37,11 @@ class Dashboard extends React.Component {
       { id: 2, name: "Neema Nyanda", avatar: avatar },
       { id: 4, name: "Maureen Buyegi", avatar: avatar },
     ];
-    this.setState({ users: users, authenticated: this.props.authenticated });
+    this.setState({
+      users: users,
+      authenticated: this.props.authenticated,
+      isAdmin: isAdmin,
+    });
   }
   render() {
     if (!this.state.authenticated) {
@@ -48,7 +53,7 @@ class Dashboard extends React.Component {
             <>
               <div className="bg-primary text-white py-4 px-4 text-right">
                 <span className="text-white px-5">
-                  {/* {this.props.user.username} */}
+                  {this.props.user.username}
                 </span>
                 <button
                   className="btn btn-primary border-white text-white"
@@ -59,17 +64,19 @@ class Dashboard extends React.Component {
                 </button>
               </div>
               <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-                <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
-                  id="users"
-                  onClick={(event) => this.handleClick(event)}
-                >
-                  <i id="users" className="material-icons display-4">
-                    people
-                  </i>
-                  <br />
-                  <span className="dispaly-4 my-2">Users</span>
-                </div>
+                {this.state.isAdmin ? (
+                  <div
+                    className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                    id="users"
+                    onClick={(event) => this.handleClick(event)}
+                  >
+                    <i id="users" className="material-icons display-4">
+                      people
+                    </i>
+                    <br />
+                    <span className="dispaly-4 my-2">Users</span>
+                  </div>
+                ) : null}
                 <div
                   className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
                   id="files"
