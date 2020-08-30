@@ -2,19 +2,22 @@
   text-align: center;
   color: #000000;
 }
-
+.avatar {
+  height: 120px;
+  width: 120px;
+}
 .App-logo,
 .dino {
   height: 30vmin;
   pointer-events: none;
   margin: 2em;
 }
-
+/* 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-}
+} */
 
 .App-header {
   background-color: #ffffff;

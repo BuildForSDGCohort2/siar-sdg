@@ -7,8 +7,7 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      signout: false,
-      authenticated: props.authenticated,
+      authenticated: true,
       currentUser: props.user,
       users: [],
       clickTarget: "none",
@@ -29,6 +28,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
+    console.log("user: ", this.props.user);
     let users = [
       { id: 1, name: "Landry Kapela", avatar: avatar },
       { id: 3, name: "Tristan Landry", avatar: avatar },
@@ -48,7 +48,7 @@ class Dashboard extends React.Component {
             <>
               <div className="bg-primary text-white py-4 px-4 text-right">
                 <span className="text-white px-5">
-                  {this.props.user.username}
+                  {/* {this.props.user.username} */}
                 </span>
                 <button
                   className="btn btn-primary border-white text-white"

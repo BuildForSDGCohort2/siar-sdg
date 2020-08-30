@@ -6,7 +6,11 @@ import Dashboard from "./dashboard";
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { authenticated: false, user: null, feedback: null };
+    this.state = {
+      authenticated: true,
+      user: { username: "admin" },
+      feedback: null,
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -50,15 +54,15 @@ class LoginForm extends React.Component {
     else {
       return (
         <div>
-          {this.state.feedback !== null ? (
-            <div className="alert-danger my-2">{this.state.feedback}</div>
-          ) : null}
           <img src={logo} className="App-logo" alt="Siar logo" />
           <p></p>
           <form
             className="col-md-4 col-lg-4 col-xl-4 offset-md-4 offset-lg-4 offset-xl-4"
             onSubmit={this.handleSubmit}
           >
+            {this.state.feedback !== null ? (
+              <div className="alert-danger py-2">{this.state.feedback}</div>
+            ) : null}
             <input
               className="form-control my-2"
               id="username"
