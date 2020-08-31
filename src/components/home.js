@@ -14,8 +14,10 @@ class Home extends React.Component {
     this.setState({ clicked: true });
   }
   render() {
-    if (this.state.clicked) return <Dashboard />;
-    else {
+    if (this.state.clicked) {
+      let user = null;
+      return <Dashboard user={user} authenticated={false} />;
+    } else {
       return (
         <div className="App">
           <header className="App-header">

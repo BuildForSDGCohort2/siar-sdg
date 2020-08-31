@@ -33,7 +33,7 @@ class LoginForm extends React.Component {
         console.log("response: ", response);
         if (response.success == 0) {
           let user = response.user;
-          this.setState({ authenticated: true, user: user };
+          this.setState({ authenticated: true, user: user });
         } else {
           this.setState({ feedback: response.msg });
         }
