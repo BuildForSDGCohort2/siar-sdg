@@ -29,7 +29,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.user)
+    if(this.props.user != null || this.props.user != undefined)
     let isAdmin = this.props.user.username === "admin";
     let users = [
       { id: 1, name: "Landry Kapela", avatar: avatar },
@@ -45,7 +45,7 @@ class Dashboard extends React.Component {
     });
   }
   render() {
-    if (!this.state.authenticated) {
+    if (!this.state.authenticated || this.state.user == undefined || this.state.user == null) {
       return <LoginForm />;
     } else {
       return (
@@ -62,7 +62,7 @@ class Dashboard extends React.Component {
                   data-target="#signoutDialog"
                 >
                   Sign Out
-                </button>
+                </button>git 
               </div>
               <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
                 {this.state.isAdmin ? (
