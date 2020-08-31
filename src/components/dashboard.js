@@ -2,6 +2,7 @@ import React from "react";
 import UserList from "./user_list";
 import avatar from "../images/avatar.jpg";
 import LoginForm from "./login";
+import config from "../config.json";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -36,7 +37,6 @@ class Dashboard extends React.Component {
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify(body),
     })
       .then((res) => res.json())
       .then((response) => {
