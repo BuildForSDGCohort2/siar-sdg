@@ -13,6 +13,9 @@ class UserForm extends React.Component {
       user: props.currentUser,
       feedback: null,
       isLoading: false,
+      hasSuccessFeedback: false,
+      hasFailFeedback: false,
+      feedback: null,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -57,22 +60,43 @@ class UserForm extends React.Component {
       .then((response) => {
         this.setState({ isLoading: false });
         console.log("response: ", response);
-        //   if (response.success == 0) {
-        //     let user = response.user;
-        //     this.setState({ authenticated: true, user: user }, () => {});
-        //   } else {
-        //     this.setState({ feedback: response.msg });
-        //   }
+        if (response.success == 0) {
+          let feedback = response.msg;
+          this.setState(
+            { hasSuccessFeedback: true, feedback: feedback },
+            () => {}
+          );
+        } else {
+          this.setState({ hasFailFeedback: true, feedback: response.msg });
+        }
       })
       .catch((error) => {
         console.error("error: ", error);
-        this.setState({ feedback: "An error occurred!" });
-        this.setState({ isLoading: false });
+        this.setState({
+          hasFailFeedback: true,
+          isLoading: false,
+          feedback: "An error occurred!",
+        });
+      })
+      .finally(() => {
+        this.handleCancel();
       });
   }
   render() {
     return (
       <div className="my-2 col-md-8 col-lg-8 col-xl-8 col-sm-10 col-sx-10 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1">
+        {this.state.feedback !== null ? (
+          <div
+            className={
+              "alert-" +
+              (this.state.hasFailFeedback ? "danger" : "success") +
+              " py-2"
+            }
+          >
+            {this.state.feedback}
+          </div>
+        ) : null}
+
         <img
           src={logo}
           className="avatar border rounded-circle"
@@ -83,10 +107,6 @@ class UserForm extends React.Component {
           className="col-md-8 col-lg-8 col-xl-8 col-sm-10 col-sx-10 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1"
           onSubmit={this.handleSubmit}
         >
-          {this.state.feedback !== null ? (
-            <div className="alert-danger py-2">{this.state.feedback}</div>
-          ) : null}
-
           <input
             className="form-control my-2"
             id="first_name"

@@ -27,7 +27,10 @@ class UserList extends React.Component {
     e.preventDefault();
     let search = e.target.value;
     let result = this.props.users.filter((u) => {
-      return u.name.toLowerCase().includes(search);
+      return (
+        u.first_name.toLowerCase().includes(search) ||
+        u.last_name.toLowerCase().includes(search)
+      );
     });
     this.setState({ filteredUsers: result });
   }
@@ -77,7 +80,11 @@ class UserList extends React.Component {
               {this.state.filteredUsers.length > 0 ? (
                 this.state.filteredUsers.map((u) => {
                   return (
-                    <UserItem avatar={u.avatar} name={u.name} key={u.id} />
+                    <UserItem
+                      avatar={u.avatar}
+                      name={u.first_name + " " + u.last_name}
+                      key={u.id}
+                    />
                   );
                 })
               ) : (

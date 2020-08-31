@@ -12,9 +12,12 @@ class Dashboard extends React.Component {
       isAdmin: false,
       users: [],
       clickTarget: "none",
+      hasFeedback: false,
+      feedback: null,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.getUsers = this.getUsers.bind(this);
   }
   handleClick(e) {
     console.log("test: ", e.target.id);
@@ -27,23 +30,45 @@ class Dashboard extends React.Component {
     e.preventDefault();
     this.setState({ authenticated: false });
   }
-
+  getUsers() {
+    fetch(config.api_url + "/data/?user=all", {
+      method: "get",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success == 0) {
+          let users = response.users;
+          let isAdmin = false;
+          if (this.props.user != null || this.props.user != undefined) {
+            if (this.props.user.username === "admin") isAdmin = true;
+          }
+          if (users.length > 0) {
+            users = users.filter((u) => {
+              return u.username != "admin";
+            });
+            users = users.map((u) => {
+              let user = u;
+              user.avatar = avatar;
+              return user;
+            });
+          }
+          this.setState({
+            users: users,
+            isAdmin: isAdmin,
+          });
+        }
+      })
+      .catch((error) => {
+        this.setState({ feedback: "Cannot retrieve list of users" });
+      });
+  }
   componentDidMount() {
     console.log("usr: ", this.state.currentUser);
-    if (this.props.user != null || this.props.user != undefined) {
-      let isAdmin = this.props.user.username === "admin" ? true : false;
-      let users = [
-        { id: 1, name: "Landry Kapela", avatar: avatar },
-        { id: 3, name: "Tristan Landry", avatar: avatar },
-        { id: 5, name: "Melanie Adanna", avatar: avatar },
-        { id: 2, name: "Neema Nyanda", avatar: avatar },
-        { id: 4, name: "Maureen Buyegi", avatar: avatar },
-      ];
-      this.setState({
-        users: users,
-        isAdmin: isAdmin,
-      });
-    }
+    this.getUsers();
   }
   render() {
     if (
