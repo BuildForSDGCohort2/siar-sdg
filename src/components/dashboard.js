@@ -29,7 +29,8 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.user != null || this.props.user != undefined) {
+    console.log("usr: ",this.state.user);
+    if (this.props.user !== null || this.props.user !== undefined) {
       let isAdmin = this.props.user.username === "admin" ? true : false;
       let users = [
         { id: 1, name: "Landry Kapela", avatar: avatar },
@@ -40,7 +41,6 @@ class Dashboard extends React.Component {
       ];
       this.setState({
         users: users,
-        authenticated: this.props.authenticated,
         isAdmin: isAdmin,
       });
     }
