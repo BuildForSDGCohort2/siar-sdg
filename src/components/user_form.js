@@ -60,15 +60,15 @@ class UserForm extends React.Component {
       .then((response) => {
         this.setState({ isLoading: false });
         console.log("response: ", response);
+        let feedback = response.msg;
         if (response.success == 0) {
-          let feedback = response.msg;
-          this.setState(
-            { hasSuccessFeedback: true, feedback: feedback },
-            () => {}
-          );
+          this.setState({ hasSuccessFeedback: true, feedback: feedback });
+          this.props.onUpdate(response.users);
+          this.handleCancel();
         } else {
           this.setState({ hasFailFeedback: true, feedback: response.msg });
         }
+        this.props.onFeedback(feedback, this.state.hasSuccessFeedback);
       })
       .catch((error) => {
         console.error("error: ", error);
@@ -77,32 +77,27 @@ class UserForm extends React.Component {
           isLoading: false,
           feedback: "An error occurred!",
         });
-      })
-      .finally(() => {
-        this.handleCancel();
       });
   }
   render() {
     return (
       <div className="my-2 col-md-8 col-lg-8 col-xl-8 col-sm-10 col-sx-10 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1">
-        {this.state.feedback !== null ? (
-          <div
-            className={
-              "alert-" +
-              (this.state.hasFailFeedback ? "danger" : "success") +
-              " py-2"
-            }
-          >
-            {this.state.feedback}
-          </div>
-        ) : null}
-
         <img
           src={logo}
           className="avatar border rounded-circle"
           alt="user avatar"
         />
-        <p></p>
+        {this.state.feedback !== null ? (
+          <div
+            className={
+              "alert-" +
+              (this.state.hasFailFeedback ? "danger" : "success") +
+              " py-2 my-2 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1"
+            }
+          >
+            {this.state.feedback}
+          </div>
+        ) : null}
         <form
           className="col-md-8 col-lg-8 col-xl-8 col-sm-10 col-sx-10 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1"
           onSubmit={this.handleSubmit}

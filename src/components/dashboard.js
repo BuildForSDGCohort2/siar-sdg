@@ -10,7 +10,7 @@ class Dashboard extends React.Component {
     this.state = {
       authenticated: props.authenticated,
       currentUser: props.user,
-      isAdmin: false,
+      isAdmin: true,
       users: [],
       clickTarget: "none",
       hasFeedback: false,
@@ -19,6 +19,14 @@ class Dashboard extends React.Component {
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.getUsers = this.getUsers.bind(this);
+    this.handleFormClose = this.handleFormClose.bind(this);
+    this.updateUsers = this.updateUsers.bind(this);
+  }
+  updateUsers(usersList) {
+    this.setState({ users: usersList });
+  }
+  handleFormClose() {
+    this.setState({ clickTarget: "none" });
   }
   handleClick(e) {
     console.log("test: ", e.target.id);
@@ -40,20 +48,19 @@ class Dashboard extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
+        console.log("users: ", response);
         if (response.success == 0) {
           let users = response.users;
           let isAdmin = false;
-          if (this.props.user != null || this.props.user != undefined) {
-            if (this.props.user.username === "admin") isAdmin = true;
+          if (
+            this.state.currentUser != null ||
+            this.state.currentUser != undefined
+          ) {
+            if (this.state.currentUser.username === "admin") isAdmin = true;
           }
           if (users.length > 0) {
             users = users.filter((u) => {
               return u.username != "admin";
-            });
-            users = users.map((u) => {
-              let user = u;
-              user.avatar = avatar;
-              return user;
             });
           }
           this.setState({
@@ -82,9 +89,9 @@ class Dashboard extends React.Component {
         <div>
           {this.state.clickTarget == "none" ? (
             <>
-              <div className="bg-primary text-white py-4 px-4 text-right">
+              <div className="d-flex justify-content-between bg-primary text-white py-4 px-4">
                 <span className="text-white px-5">
-                  {this.props.user.username}
+                  {/* {this.props.user.username} */}
                 </span>
                 <button
                   className="btn btn-primary border-white text-white"
@@ -145,6 +152,8 @@ class Dashboard extends React.Component {
             </>
           ) : this.state.clickTarget == "users" ? (
             <UserList
+              onUpdate={(users) => this.updateUsers(users)}
+              onFormClose={() => this.handleFormClose()}
               users={this.state.users}
               currentUser={this.state.currentUser}
               authenticated={this.state.authenticated}
