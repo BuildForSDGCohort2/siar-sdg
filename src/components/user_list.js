@@ -51,7 +51,7 @@ class UserList extends React.Component {
   handleSearch(e) {
     e.preventDefault();
     let search = e.target.value.toLowerCase();
-    let result = this.props.users.filter((u) => {
+    let result = this.state.users.filter((u) => {
       return (
         u.first_name.toLowerCase().includes(search) ||
         u.last_name.toLowerCase().includes(search) ||
@@ -71,7 +71,7 @@ class UserList extends React.Component {
     this.setState({ authenticated: false });
   }
   componentDidMount() {
-    this.setState({ selectedUser: null });
+    this.setState({ selectedUser: null, filteredUsers: this.state.users });
   }
   render() {
     return (
