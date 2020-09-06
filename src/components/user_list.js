@@ -1,6 +1,7 @@
 import React from "react";
 import UserItem from "./user_item";
 import UserForm from "./user_form";
+import UserDetail from "./user_detail";
 
 class UserList extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class UserList extends React.Component {
       hasFeedback: false,
       feedback: null,
       closeMe: false,
+      selectedUser: null,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -22,11 +24,19 @@ class UserList extends React.Component {
     this.handleFeedback = this.handleFeedback.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.updateUsers = this.updateUsers.bind(this);
+    this.handleCloseDetail = this.handleCloseDetail.bind(this);
   }
   updateUsers(list) {
     this.setState({ filteredUsers: list }, () => {
       this.props.onUpdate(this.state.users);
     });
+  }
+  handleClick(id) {
+    console.log("clicked id: ", id);
+    let selectedUser = this.state.users.filter((u) => {
+      return u.id === id;
+    })[0];
+    this.setState({ selectedUser: selectedUser });
   }
   handleCancel(state) {
     this.setState({ showForm: !state });
@@ -50,12 +60,18 @@ class UserList extends React.Component {
     });
     this.setState({ filteredUsers: result });
   }
+  handleCloseDetail() {
+    this.setState({ selectedUser: null });
+  }
   handleClose() {
     this.props.onFormClose();
   }
   handleSignout(e) {
     e.preventDefault();
     this.setState({ authenticated: false });
+  }
+  componentDidMount() {
+    this.setState({ selectedUser: null });
   }
   render() {
     return (
@@ -90,7 +106,7 @@ class UserList extends React.Component {
             currentUser={this.state.currentUser}
             onCancelForm={(state) => this.handleCancel(state)}
           />
-        ) : (
+        ) : this.state.selectedUser === null ? (
           <>
             <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5 d-flex justify-content-between">
               <button
@@ -124,6 +140,8 @@ class UserList extends React.Component {
                       avatar={u.avatar}
                       name={u.first_name + " " + u.last_name}
                       key={u.id}
+                      id={u.id}
+                      onClick={(id) => this.handleClick(id)}
                     />
                   );
                 })
@@ -134,6 +152,11 @@ class UserList extends React.Component {
               )}
             </div>
           </>
+        ) : (
+          <UserDetail
+            user={this.state.selectedUser}
+            onClose={this.handleCloseDetail}
+          />
         )}
         <div
           className="modal fade"
