@@ -2,19 +2,31 @@ import React from "react";
 import UserList from "./user_list";
 import avatar from "../images/avatar.jpg";
 import LoginForm from "./login";
+import config from "../config.json";
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      signout: false,
       authenticated: props.authenticated,
       currentUser: props.user,
+      isAdmin: true,
       users: [],
       clickTarget: "none",
+      hasFeedback: false,
+      feedback: null,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.getUsers = this.getUsers.bind(this);
+    this.handleFormClose = this.handleFormClose.bind(this);
+    this.updateUsers = this.updateUsers.bind(this);
+  }
+  updateUsers(usersList) {
+    this.setState({ users: usersList });
+  }
+  handleFormClose() {
+    this.setState({ clickTarget: "none" });
   }
   handleClick(e) {
     console.log("test: ", e.target.id);
@@ -27,28 +39,59 @@ class Dashboard extends React.Component {
     e.preventDefault();
     this.setState({ authenticated: false });
   }
-
+  getUsers() {
+    fetch(config.api_url + "/data/?user=all", {
+      method: "get",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        console.log("users: ", response);
+        if (response.success == 0) {
+          let users = response.users;
+          let isAdmin = false;
+          if (
+            this.state.currentUser != null ||
+            this.state.currentUser != undefined
+          ) {
+            if (this.state.currentUser.username === "admin") isAdmin = true;
+          }
+          if (users.length > 0) {
+            users = users.filter((u) => {
+              return u.username != "admin";
+            });
+          }
+          this.setState({
+            users: users,
+            isAdmin: isAdmin,
+          });
+        }
+      })
+      .catch((error) => {
+        this.setState({ feedback: "Cannot retrieve list of users" });
+      });
+  }
   componentDidMount() {
-    let users = [
-      { id: 1, name: "Landry Kapela", avatar: avatar },
-      { id: 3, name: "Tristan Landry", avatar: avatar },
-      { id: 5, name: "Melanie Adanna", avatar: avatar },
-      { id: 2, name: "Neema Nyanda", avatar: avatar },
-      { id: 4, name: "Maureen Buyegi", avatar: avatar },
-    ];
-    this.setState({ users: users, authenticated: this.props.authenticated });
+    console.log("usr: ", this.state.currentUser);
+    this.getUsers();
   }
   render() {
-    if (!this.state.authenticated) {
+    if (
+      !this.state.authenticated ||
+      this.state.currentUser == undefined ||
+      this.state.currentUser == null
+    ) {
       return <LoginForm />;
     } else {
       return (
         <div>
           {this.state.clickTarget == "none" ? (
             <>
-              <div className="bg-primary text-white py-4 px-4 text-right">
+              <div className="d-flex justify-content-between bg-primary text-white py-4 px-4">
                 <span className="text-white px-5">
-                  {this.props.user.username}
+                  {/* {this.props.user.username} */}
                 </span>
                 <button
                   className="btn btn-primary border-white text-white"
@@ -59,17 +102,19 @@ class Dashboard extends React.Component {
                 </button>
               </div>
               <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-                <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
-                  id="users"
-                  onClick={(event) => this.handleClick(event)}
-                >
-                  <i id="users" className="material-icons display-4">
-                    people
-                  </i>
-                  <br />
-                  <span className="dispaly-4 my-2">Users</span>
-                </div>
+                {this.state.isAdmin ? (
+                  <div
+                    className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                    id="users"
+                    onClick={(event) => this.handleClick(event)}
+                  >
+                    <i id="users" className="material-icons display-4">
+                      people
+                    </i>
+                    <br />
+                    <span className="dispaly-4 my-2">Users</span>
+                  </div>
+                ) : null}
                 <div
                   className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
                   id="files"
@@ -107,6 +152,8 @@ class Dashboard extends React.Component {
             </>
           ) : this.state.clickTarget == "users" ? (
             <UserList
+              onUpdate={(users) => this.updateUsers(users)}
+              onFormClose={() => this.handleFormClose()}
               users={this.state.users}
               currentUser={this.state.currentUser}
               authenticated={this.state.authenticated}
@@ -146,7 +193,11 @@ class Dashboard extends React.Component {
                   >
                     Cancel
                   </button>
-                  <button type="button" className="btn btn-primary">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={this.handleSignout}
+                  >
                     Sign Out
                   </button>
                 </div>

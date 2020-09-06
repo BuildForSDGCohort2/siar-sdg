@@ -1,5 +1,7 @@
 import React from "react";
 import UserItem from "./user_item";
+import UserForm from "./user_form";
+import UserDetail from "./user_detail";
 
 class UserList extends React.Component {
   constructor(props) {
@@ -7,12 +9,69 @@ class UserList extends React.Component {
     this.state = {
       currentUser: props.currentUser,
       authenticated: props.authenticated,
+      filteredUsers: props.users,
+      users: props.users,
+      showForm: false,
+      hasFeedback: false,
+      feedback: null,
+      closeMe: false,
+      selectedUser: null,
     };
     this.handleSignout = this.handleSignout.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+    this.handleNewUser = this.handleNewUser.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleFeedback = this.handleFeedback.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.updateUsers = this.updateUsers.bind(this);
+    this.handleCloseDetail = this.handleCloseDetail.bind(this);
+  }
+  updateUsers(list) {
+    this.setState({ filteredUsers: list }, () => {
+      this.props.onUpdate(this.state.users);
+    });
+  }
+  handleClick(id) {
+    console.log("clicked id: ", id);
+    let selectedUser = this.state.users.filter((u) => {
+      return u.id === id;
+    })[0];
+    this.setState({ selectedUser: selectedUser });
+  }
+  handleCancel(state) {
+    this.setState({ showForm: !state });
+  }
+  handleNewUser(e) {
+    e.preventDefault();
+    this.setState({ showForm: true });
+  }
+  handleFeedback(message, success) {
+    this.setState({ feedback: message, hasFeedback: success });
+  }
+  handleSearch(e) {
+    e.preventDefault();
+    let search = e.target.value.toLowerCase();
+    let result = this.props.users.filter((u) => {
+      return (
+        u.first_name.toLowerCase().includes(search) ||
+        u.last_name.toLowerCase().includes(search) ||
+        u.username.toLowerCase().includes(search)
+      );
+    });
+    this.setState({ filteredUsers: result });
+  }
+  handleCloseDetail() {
+    this.setState({ selectedUser: null });
+  }
+  handleClose() {
+    this.props.onFormClose();
   }
   handleSignout(e) {
     e.preventDefault();
-    this.setState({ authententicated: false });
+    this.setState({ authenticated: false });
+  }
+  componentDidMount() {
+    this.setState({ selectedUser: null });
   }
   render() {
     return (
@@ -29,11 +88,76 @@ class UserList extends React.Component {
             Sign Out
           </button>
         </div>
-        <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-          {this.props.users.forEach((u) => {
-            return <UserItem avatar={u.avatar} name={u.name} key={u.id} />;
-          })}
-        </div>
+        {this.state.feedback !== null ? (
+          <div
+            className={
+              "alert-" +
+              (this.state.hasFeedback ? "success" : "danger") +
+              " py-2"
+            }
+          >
+            {this.state.feedback}
+          </div>
+        ) : null}
+        {this.state.showForm ? (
+          <UserForm
+            onFeedback={(msg, success) => this.handleFeedback(msg, success)}
+            onUpdate={(list) => this.updateUsers(list)}
+            currentUser={this.state.currentUser}
+            onCancelForm={(state) => this.handleCancel(state)}
+          />
+        ) : this.state.selectedUser === null ? (
+          <>
+            <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5 d-flex justify-content-between">
+              <button
+                className="btn btn-success col-sm-4 col-xm-4 col-md-2 col-lg-2 col-xl-2"
+                onClick={this.handleNewUser}
+              >
+                Add User
+              </button>
+              <i
+                className="material-icons btn btn-danger  col-sm-2 col-xm-2 col-md-1 col-lg-1 col-xl-1"
+                onClick={this.handleClose}
+              >
+                close
+              </i>
+            </div>
+            <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
+              <input
+                type="text"
+                className="form-control col-md-8 col-lg-8 col-xl-8  offset-md-2 offset-lg-2 offset-xl-2 my-5"
+                id="search"
+                name="search"
+                placeholder="search"
+                onChange={this.handleSearch}
+              />
+            </div>
+            <div className="row col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
+              {this.state.filteredUsers.length > 0 ? (
+                this.state.filteredUsers.map((u) => {
+                  return (
+                    <UserItem
+                      avatar={u.avatar}
+                      name={u.first_name + " " + u.last_name}
+                      key={u.id}
+                      id={u.id}
+                      onClick={(id) => this.handleClick(id)}
+                    />
+                  );
+                })
+              ) : (
+                <span className="col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5 text-center">
+                  No Records Matched
+                </span>
+              )}
+            </div>
+          </>
+        ) : (
+          <UserDetail
+            user={this.state.selectedUser}
+            onClose={this.handleCloseDetail}
+          />
+        )}
         <div
           className="modal fade"
           id="signoutDialog"

@@ -8,6 +8,7 @@ class LoginForm extends React.Component {
     super(props);
     this.state = { authenticated: false, user: null, feedback: null };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.signin = this.signin.bind(this);
   }
 
   handleSubmit(event) {
@@ -16,6 +17,10 @@ class LoginForm extends React.Component {
     let password = document.getElementById("password").value;
     let body = { username: username, password: password, btnLogin: "login" };
     console.log("body: ", body);
+    this.signin(body);
+    // this.setState({ authenticated: false, user: body }, () => {});
+  }
+  signin(body) {
     fetch(config.api_url + "/auth/", {
       method: "post",
       headers: {
@@ -28,7 +33,7 @@ class LoginForm extends React.Component {
         console.log("response: ", response);
         if (response.success == 0) {
           let user = response.user;
-          this.setState({ authenticated: true, user: user }, () => {});
+          this.setState({ authenticated: true, user: user });
         } else {
           this.setState({ feedback: response.msg });
         }
@@ -38,7 +43,6 @@ class LoginForm extends React.Component {
         this.setState({ feedback: "An error occurred!" });
       });
   }
-
   render() {
     if (this.state.authenticated)
       return (
@@ -50,15 +54,15 @@ class LoginForm extends React.Component {
     else {
       return (
         <div>
-          {this.state.feedback !== null ? (
-            <div className="alert-danger my-2">{this.state.feedback}</div>
-          ) : null}
           <img src={logo} className="App-logo" alt="Siar logo" />
           <p></p>
           <form
             className="col-md-4 col-lg-4 col-xl-4 offset-md-4 offset-lg-4 offset-xl-4"
             onSubmit={this.handleSubmit}
           >
+            {this.state.feedback !== null ? (
+              <div className="alert-danger py-2">{this.state.feedback}</div>
+            ) : null}
             <input
               className="form-control my-2"
               id="username"
