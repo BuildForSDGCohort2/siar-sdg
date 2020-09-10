@@ -12,6 +12,9 @@
   pointer-events: none;
   margin: 2em;
 }
+.form-group label {
+  text-align: left;
+}
 /* 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

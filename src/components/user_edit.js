@@ -10,25 +10,55 @@ class UserEdit extends React.Component {
     super(props);
     this.state = {
       authenticated: true,
-      user: props.currentUser,
+      currentUser: props.currentUser,
       feedback: null,
       isLoading: false,
       hasSuccessFeedback: false,
       hasFailFeedback: false,
       feedback: null,
+      user: props.user,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.signup = this.signup.bind(this);
+    this.update = this.update.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   handleCancel() {
     this.props.onCancelForm(true);
+  }
+  handleChange(e) {
+    let target = e.target;
+    let value = target.value;
+    let user = this.state.user;
+    switch (target.id.toLowerCase()) {
+      case "username":
+        user.username = value;
+        break;
+      case "first_name":
+        user.first_name = value;
+        break;
+      case "middle_name":
+        user.middle_name = value;
+        break;
+      case "email":
+        user.email = value;
+        break;
+      case "last_name":
+        user.last_name = value;
+        break;
+      case "password":
+        user.password = value;
+        break;
+      default:
+        break;
+    }
+    this.setState({ user: user });
   }
   handleSubmit(event) {
     event.preventDefault();
     this.setState({ isLoading: true });
     let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+    // let password = document.getElementById("password").value;
     let first_name = document.getElementById("first_name").value;
     let middle_name = document.getElementById("middle_name").value;
     let last_name = document.getElementById("last_name").value;
@@ -36,21 +66,22 @@ class UserEdit extends React.Component {
     let email = document.getElementById("email").value;
     // let password = document.getElementById("password").value;
     let body = {
+      id: this.props.user.id,
       username: username,
-      password: password,
+      //   password: password,
       first_name: first_name,
       middle_name: middle_name,
       last_name: last_name,
       phone: phone,
       email: email,
-      btnRegister: "register",
+      btnUpdateUser: "update",
     };
     console.log("body: ", body);
-    this.signup(body);
+    this.update(body);
   }
-  signup(user) {
+  update(user) {
     fetch(config.api_url + "/auth/", {
-      method: "post",
+      method: "put",
       headers: {
         "Content-type": "application/json",
       },
@@ -99,34 +130,37 @@ class UserEdit extends React.Component {
         <div className="row col-xs-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-10 offset-xl-1  my-5 d-flex justify-content-between">
           <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
             <img
-              src={config.api_url + "/data/" + this.props.user.avatar}
+              src={config.api_url + "/data/" + this.state.user.avatar}
               className="avatar border rounded-circle"
               alt="user avatar"
             />
           </div>
 
           <div className="text-left col-md-10 col-lg-10 col-xl-10 col-sm-12 col-sx-12">
-            <form>
+            <form onSubmit={this.handleSubmit}>
               <label htmlFor="first_name">First Name</label>
               <input
                 className="my-2 form-control"
                 id="first_name"
                 name="first_name"
-                value={this.props.user.first_name}
+                value={this.state.user.first_name}
+                onChange={this.handleChange}
               />
               <label htmlFor="middle_name">Middle Name</label>
               <input
                 className="my-2 form-control"
                 id="middle_name"
                 name="middle_name"
-                value={this.props.user.middle_name}
+                value={this.state.user.middle_name}
+                onChange={this.handleChange}
               />
               <label htmlFor="last_name">Last Name</label>
               <input
                 className="my-2 form-control"
                 id="last_name"
                 name="last_name"
-                value={this.props.user.last_name}
+                value={this.state.user.last_name}
+                onChange={this.handleChange}
               />
 
               <label htmlFor="phone">Phone</label>
@@ -134,21 +168,24 @@ class UserEdit extends React.Component {
                 className="my-2 form-control"
                 id="phone"
                 name="phone"
-                value={this.props.user.phone}
+                value={this.state.user.phone}
+                onChange={this.handleChange}
               />
               <label htmlFor="email">E-mail</label>
               <input
                 className="my-2 form-control"
                 id="email"
                 name="email"
-                value={this.props.user.email}
+                value={this.state.user.email}
+                onChange={this.handleChange}
               />
               <label htmlFor="username">Officer ID</label>
               <input
                 className="my-2 form-control"
                 id="username"
                 name="username"
-                value={this.props.user.username}
+                value={this.state.user.username}
+                onChange={this.handleChange}
               />
               <div className="row form-group offset-md-1 offset-xl-1 offset-lg-1 my-3 px-2">
                 {this.state.isLoading ? (
@@ -166,7 +203,7 @@ class UserEdit extends React.Component {
                 )}
 
                 <input
-                  onClick={this.handleCancel}
+                  onClick={this.props.onClose}
                   type="button"
                   name="btnCancel"
                   id="btnCancel"

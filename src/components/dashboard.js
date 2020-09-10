@@ -3,6 +3,7 @@ import UserList from "./user_list";
 import avatar from "../images/avatar.jpg";
 import LoginForm from "./login";
 import config from "../config.json";
+import File from "./new_file";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -87,20 +88,20 @@ class Dashboard extends React.Component {
     } else {
       return (
         <div>
+          <div className="d-flex justify-content-between bg-primary text-white py-4 px-4">
+            <span className="text-white px-5">
+              {/* {this.props.user.username} */}
+            </span>
+            <button
+              className="btn btn-primary border-white text-white"
+              data-toggle="modal"
+              data-target="#signoutDialog"
+            >
+              Sign Out
+            </button>
+          </div>
           {this.state.clickTarget == "none" ? (
             <>
-              <div className="d-flex justify-content-between bg-primary text-white py-4 px-4">
-                <span className="text-white px-5">
-                  {/* {this.props.user.username} */}
-                </span>
-                <button
-                  className="btn btn-primary border-white text-white"
-                  data-toggle="modal"
-                  data-target="#signoutDialog"
-                >
-                  Sign Out
-                </button>
-              </div>
               <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
                 {this.state.isAdmin ? (
                   <div
@@ -158,6 +159,8 @@ class Dashboard extends React.Component {
               currentUser={this.state.currentUser}
               authenticated={this.state.authenticated}
             />
+          ) : this.state.clickTarget == "files" ? (
+            <File onCancelForm={this.handleFormClose} />
           ) : null}
           <div
             className="modal fade"

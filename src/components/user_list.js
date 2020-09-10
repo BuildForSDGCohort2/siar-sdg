@@ -76,18 +76,6 @@ class UserList extends React.Component {
   render() {
     return (
       <div>
-        <div className="bg-primary text-white py-4 px-4 text-right">
-          <span className="text-white px-5">
-            {this.state.currentUser.username}
-          </span>
-          <button
-            className="btn btn-primary border-white text-white"
-            data-toggle="modal"
-            data-target="#signoutDialog"
-          >
-            Sign Out
-          </button>
-        </div>
         {this.state.feedback !== null ? (
           <div
             className={
