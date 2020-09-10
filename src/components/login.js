@@ -3,10 +3,16 @@ import React from "react";
 import logo from "../images/siar_logo.png";
 import config from "../config.json";
 import Dashboard from "./dashboard";
+import { Spinner } from "react-bootstrap";
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { authenticated: false, user: null, feedback: null };
+    this.state = {
+      authenticated: false,
+      user: null,
+      feedback: null,
+      isLoading: false,
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.signin = this.signin.bind(this);
   }
@@ -17,6 +23,7 @@ class LoginForm extends React.Component {
     let password = document.getElementById("password").value;
     let body = { username: username, password: password, btnLogin: "login" };
     console.log("body: ", body);
+    this.setState({ isLoading: true });
     this.signin(body);
     // this.setState({ authenticated: false, user: body }, () => {});
   }
@@ -33,14 +40,14 @@ class LoginForm extends React.Component {
         console.log("response: ", response);
         if (response.success == 0) {
           let user = response.user;
-          this.setState({ authenticated: true, user: user });
+          this.setState({ authenticated: true, user: user, isLoading: false });
         } else {
-          this.setState({ feedback: response.msg });
+          this.setState({ feedback: response.msg, isLoading: false });
         }
       })
       .catch((error) => {
         console.error("error: ", error);
-        this.setState({ feedback: "An error occurred!" });
+        this.setState({ feedback: "An error occurred!", isLoading: false });
       });
   }
   render() {
@@ -78,13 +85,19 @@ class LoginForm extends React.Component {
               name="password"
               type="password"
             />
-            <input
-              type="submit"
-              name="btnLogin"
-              id="btnLogin"
-              className="form-control btn-primary btn my-2"
-              value="Login"
-            />
+            {this.state.isLoading ? (
+              <button className="form-control btn-primary btn my-2">
+                <Spinner variant="light" animation="border" />
+              </button>
+            ) : (
+              <input
+                type="submit"
+                name="btnLogin"
+                id="btnLogin"
+                className="form-control btn-primary btn my-2"
+                value="Login"
+              />
+            )}
           </form>
           <footer className="text-secondary text-small my-5">
             All Rights Reserved
