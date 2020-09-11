@@ -117,7 +117,7 @@ class File extends React.Component {
           <fieldset className="border p-2 my-5">
             <legend className="w-auto text-left ">Personal Information</legend>
             <div className="row">
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <select
                   className="form-control my-2"
                   id="id_type"
@@ -132,7 +132,7 @@ class File extends React.Component {
                   <option>Driving License</option>
                 </select>
               </div>{" "}
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   className="form-control my-2"
                   id="id_number"
@@ -143,7 +143,7 @@ class File extends React.Component {
               </div>
             </div>
             <div className="row">
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   className="form-control my-2"
                   id="first_name"
@@ -153,7 +153,7 @@ class File extends React.Component {
                   required
                 />
               </div>{" "}
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   className="form-control my-2"
                   id="middle_name"
@@ -164,7 +164,7 @@ class File extends React.Component {
               </div>
             </div>
             <div className="row">
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   className="form-control my-2"
                   id="last_name"
@@ -174,7 +174,7 @@ class File extends React.Component {
                   required
                 />
               </div>{" "}
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   className="form-control my-2"
                   id="phone"
@@ -186,7 +186,7 @@ class File extends React.Component {
               </div>
             </div>
             <div className="row">
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   className="form-control my-2"
                   id="email"
@@ -195,7 +195,7 @@ class File extends React.Component {
                   type="email"
                 />
               </div>
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   className="form-control my-2"
                   id="dob"
@@ -209,7 +209,7 @@ class File extends React.Component {
               </div>
             </div>
             <div className="row">
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <select
                   id="education"
                   name="education"
@@ -227,7 +227,7 @@ class File extends React.Component {
             <fieldset className="border p-2 my-5">
               <legend className="w-auto text-left small">Place of Birth</legend>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <select
                     className="form-control"
                     id="city_of_birth"
@@ -239,7 +239,7 @@ class File extends React.Component {
                     })}
                   </select>
                 </div>
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
@@ -250,7 +250,7 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
@@ -259,7 +259,7 @@ class File extends React.Component {
                     placeholder="Ward"
                   />
                 </div>
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
@@ -270,7 +270,7 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
@@ -286,7 +286,7 @@ class File extends React.Component {
           <fieldset className="border p-2 my-5">
             <legend className="w-auto text-left ">Residential Address</legend>
             <div className="row">
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <select className="form-control" id="city" name="city">
                   <option>--Select Region--</option>
                   {getCityNames("asc").map((c) => {
@@ -294,7 +294,7 @@ class File extends React.Component {
                   })}
                 </select>
               </div>
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   type="text"
                   className="form-control"
@@ -305,7 +305,7 @@ class File extends React.Component {
               </div>
             </div>
             <div className="row">
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   type="text"
                   className="form-control"
@@ -314,7 +314,7 @@ class File extends React.Component {
                   placeholder="Ward"
                 />
               </div>
-              <div className="col py-2">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                 <input
                   type="text"
                   className="form-control"
@@ -328,7 +328,7 @@ class File extends React.Component {
           <fieldset className="border p-2 my-5">
             <legend className="w-auto text-left ">Charges/Offenses</legend>
             <select id="offense" name="offense" className="form-control">
-              <option>--Select Offense--</option>
+              <option value="none">--Select Offense--</option>
               {this.state.offenses.map((of) => {
                 return (
                   <option key={of.id} value={of.id}>
@@ -337,10 +337,8 @@ class File extends React.Component {
                 );
               })}
             </select>
-            <div className="form-group">
-              <label htmlFor="description" className="text-left">
-                Description
-              </label>
+            <div className="form-group text-left">
+              <span className="text-left my-2">Description</span>
               <textarea
                 id="description"
                 name="textarea"
@@ -352,7 +350,7 @@ class File extends React.Component {
                 Crime Area/Location
               </legend>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <select
                     className="form-control"
                     id="city_of_crime"
@@ -364,7 +362,7 @@ class File extends React.Component {
                     })}
                   </select>
                 </div>
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
@@ -375,7 +373,7 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
@@ -384,7 +382,7 @@ class File extends React.Component {
                     placeholder="Ward"
                   />
                 </div>
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
@@ -395,7 +393,7 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"

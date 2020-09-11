@@ -105,7 +105,7 @@ class Dashboard extends React.Component {
               <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
                 {this.state.isAdmin ? (
                   <div
-                    className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                    className="m-4 col-md-2 col-lg-2 col-xl-2 col-sm-4 col-xs-4 btn btn-primary"
                     id="users"
                     onClick={(event) => this.handleClick(event)}
                   >
@@ -117,7 +117,7 @@ class Dashboard extends React.Component {
                   </div>
                 ) : null}
                 <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
                   id="files"
                   onClick={(event) => this.handleClick(event)}
                 >
@@ -128,7 +128,7 @@ class Dashboard extends React.Component {
                   <span className="dispaly-4">Files</span>
                 </div>
                 <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
                   id="reports"
                   onClick={(event) => this.handleClick(event)}
                 >
@@ -139,7 +139,7 @@ class Dashboard extends React.Component {
                   <span className="dispaly-4">Reports</span>
                 </div>
                 <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
                   id="settings"
                   onClick={(event) => this.handleClick(event)}
                 >
