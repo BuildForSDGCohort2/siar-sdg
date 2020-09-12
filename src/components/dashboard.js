@@ -3,7 +3,7 @@ import UserList from "./user_list";
 import avatar from "../images/avatar.jpg";
 import LoginForm from "./login";
 import config from "../config.json";
-import File from "./new_file";
+import FileList from "./file_list";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -13,6 +13,7 @@ class Dashboard extends React.Component {
       currentUser: props.user,
       isAdmin: true,
       users: [],
+      files: [],
       clickTarget: "none",
       hasFeedback: false,
       feedback: null,
@@ -22,9 +23,13 @@ class Dashboard extends React.Component {
     this.getUsers = this.getUsers.bind(this);
     this.handleFormClose = this.handleFormClose.bind(this);
     this.updateUsers = this.updateUsers.bind(this);
+    this.updateFiles = this.updateFiles.bind(this);
   }
   updateUsers(usersList) {
     this.setState({ users: usersList });
+  }
+  updateFiles(files) {
+    this.setState({ files: files });
   }
   handleFormClose() {
     this.setState({ clickTarget: "none" });
@@ -74,9 +79,24 @@ class Dashboard extends React.Component {
         this.setState({ feedback: "Cannot retrieve list of users" });
       });
   }
+  getFiles() {
+    fetch(config.api_url + "/data/?files=all", {
+      method: "get",
+      headers: { "content-type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log("files: ", result.files);
+        this.setState({ files: result.files });
+      })
+      .catch((e) => {
+        console.log("error: ", e);
+      });
+  }
   componentDidMount() {
     console.log("usr: ", this.state.currentUser);
     this.getUsers();
+    this.getFiles();
   }
   render() {
     if (
@@ -105,7 +125,7 @@ class Dashboard extends React.Component {
               <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
                 {this.state.isAdmin ? (
                   <div
-                    className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                    className="m-4 col-md-2 col-lg-2 col-xl-2 col-sm-4 col-xs-4 btn btn-primary"
                     id="users"
                     onClick={(event) => this.handleClick(event)}
                   >
@@ -117,7 +137,7 @@ class Dashboard extends React.Component {
                   </div>
                 ) : null}
                 <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
                   id="files"
                   onClick={(event) => this.handleClick(event)}
                 >
@@ -128,7 +148,7 @@ class Dashboard extends React.Component {
                   <span className="dispaly-4">Files</span>
                 </div>
                 <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
                   id="reports"
                   onClick={(event) => this.handleClick(event)}
                 >
@@ -139,7 +159,7 @@ class Dashboard extends React.Component {
                   <span className="dispaly-4">Reports</span>
                 </div>
                 <div
-                  className="m-4 col-md-2 col-lg-2 col-xl-2 btn btn-primary"
+                  className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
                   id="settings"
                   onClick={(event) => this.handleClick(event)}
                 >
@@ -160,7 +180,13 @@ class Dashboard extends React.Component {
               authenticated={this.state.authenticated}
             />
           ) : this.state.clickTarget == "files" ? (
-            <File onCancelForm={this.handleFormClose} />
+            <FileList
+              onUpdate={(files) => this.updateFiles(files)}
+              onFormClose={() => this.handleFormClose()}
+              files={this.state.files}
+              currentUser={this.state.currentUser}
+              authenticated={this.state.authenticated}
+            />
           ) : null}
           <div
             className="modal fade"

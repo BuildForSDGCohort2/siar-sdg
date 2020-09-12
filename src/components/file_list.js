@@ -1,47 +1,47 @@
 import React from "react";
-import UserItem from "./user_item";
-import UserForm from "./user_form";
-import UserDetail from "./user_detail";
+import FileDetail from "./file_detail";
+import FileItem from "./file_item";
+import File from "./new_file";
 
-class UserList extends React.Component {
+class FileList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       currentUser: props.currentUser,
+      filteredFiles: props.files,
       authenticated: props.authenticated,
-      filteredUsers: props.users,
-      users: props.users,
+      files: props.files,
       showForm: false,
       hasFeedback: false,
       feedback: null,
       closeMe: false,
-      selectedUser: null,
+      selectedFile: null,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
-    this.handleNewUser = this.handleNewUser.bind(this);
+    this.handleNewFile = this.handleNewFile.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleFeedback = this.handleFeedback.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.updateUsers = this.updateUsers.bind(this);
+    this.updateFiles = this.updateFiles.bind(this);
     this.handleCloseDetail = this.handleCloseDetail.bind(this);
   }
-  updateUsers(list) {
-    this.setState({ filteredUsers: list }, () => {
-      this.props.onUpdate(this.state.users);
+  updateFiles(list) {
+    this.setState({ files: list, filteredFiles: list }, () => {
+      this.props.onUpdate(this.state.files);
     });
   }
   handleClick(id) {
     console.log("clicked id: ", id);
-    let selectedUser = this.state.users.filter((u) => {
-      return u.id === id;
+    let selectedFile = this.state.files.filter((f) => {
+      return f.id === id;
     })[0];
-    this.setState({ selectedUser: selectedUser });
+    this.setState({ selectedFile: selectedFile });
   }
   handleCancel(state) {
     this.setState({ showForm: !state });
   }
-  handleNewUser(e) {
+  handleNewFile(e) {
     e.preventDefault();
     this.setState({ showForm: true });
   }
@@ -51,17 +51,17 @@ class UserList extends React.Component {
   handleSearch(e) {
     e.preventDefault();
     let search = e.target.value.toLowerCase();
-    let result = this.state.users.filter((u) => {
+    let result = this.state.files.filter((u) => {
       return (
         u.first_name.toLowerCase().includes(search) ||
         u.last_name.toLowerCase().includes(search) ||
-        u.username.toLowerCase().includes(search)
+        u.middle_name.toLowerCase().includes(search)
       );
     });
-    this.setState({ filteredUsers: result });
+    this.setState({ filteredFiles: result });
   }
   handleCloseDetail() {
-    this.setState({ selectedUser: null });
+    this.setState({ selectedFile: null });
   }
   handleClose() {
     this.props.onFormClose();
@@ -71,7 +71,12 @@ class UserList extends React.Component {
     this.setState({ authenticated: false });
   }
   componentDidMount() {
-    this.setState({ selectedUser: null, filteredUsers: this.state.users });
+    this.setState(
+      { selectedFile: null, filteredFiles: this.state.files },
+      () => {
+        // if (this.state.files.length == 0) this.setState({ showForm: true });
+      }
+    );
   }
   render() {
     return (
@@ -88,20 +93,20 @@ class UserList extends React.Component {
           </div>
         ) : null}
         {this.state.showForm ? (
-          <UserForm
+          <File
             onFeedback={(msg, success) => this.handleFeedback(msg, success)}
-            onUpdate={(list) => this.updateUsers(list)}
+            onUpdate={(list) => this.updateFiles(list)}
             currentUser={this.state.currentUser}
             onCancelForm={(state) => this.handleCancel(state)}
           />
-        ) : this.state.selectedUser === null ? (
+        ) : this.state.selectedFile === null ? (
           <>
             <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5 d-flex justify-content-between">
               <button
                 className="btn btn-success col-sm-4 col-xs-4 col-md-2 col-lg-2 col-xl-2"
-                onClick={this.handleNewUser}
+                onClick={this.handleNewFile}
               >
-                Add User
+                New File
               </button>
               <i
                 className="material-icons btn btn-danger  col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1"
@@ -121,11 +126,11 @@ class UserList extends React.Component {
               />
             </div>
             <div className="row col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-              {this.state.filteredUsers.length > 0 ? (
-                this.state.filteredUsers.map((u) => {
+              {this.state.filteredFiles.length > 0 ? (
+                this.state.filteredFiles.map((u) => {
                   return (
-                    <UserItem
-                      avatar={u.avatar}
+                    <FileItem
+                      avatar={u.file_picture}
                       name={u.first_name + " " + u.last_name}
                       key={u.id}
                       id={u.id}
@@ -141,11 +146,12 @@ class UserList extends React.Component {
             </div>
           </>
         ) : (
-          <UserDetail
-            onFeedback={(msg, success) => this.handleFeedback(msg, success)}
-            user={this.state.selectedUser}
+          <FileDetail
+            onFeedback={(s, m) => this.handleFeedback(s, m)}
+            file={this.state.selectedFile}
+            currentUser={this.props.currentUser}
             onClose={this.handleCloseDetail}
-            onUpdate={(u) => this.updateUsers(u)}
+            onUpdate={(list) => this.updateFiles(list)}
           />
         )}
         <div
@@ -195,4 +201,4 @@ class UserList extends React.Component {
     );
   }
 }
-export default UserList;
+export default FileList;

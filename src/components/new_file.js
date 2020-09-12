@@ -5,6 +5,7 @@ import config from "../config.json";
 import Dashboard from "./dashboard";
 import { Spinner } from "react-bootstrap";
 import { getCityNames } from "postcodes-tz";
+import OffenseForm from "./new_offense";
 
 class File extends React.Component {
   constructor(props) {
@@ -24,17 +25,19 @@ class File extends React.Component {
     // console.log("cities: ", getCityNames("asc"));
     this.state = {
       authenticated: true,
-      user: props.currentUser,
+      currentUser: props.currentUser,
       feedback: null,
       isLoading: false,
       hasSuccessFeedback: false,
       hasFailFeedback: false,
       feedback: null,
       offenses: offenses,
+      next: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.signup = this.signup.bind(this);
+    this.createFile = this.createFile.bind(this);
+    this.readBase64 = this.readBase64.bind(this);
   }
   handleCancel() {
     this.props.onCancelForm(true);
@@ -42,34 +45,84 @@ class File extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     this.setState({ isLoading: true });
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
-    let first_name = document.getElementById("first_name").value;
-    let middle_name = document.getElementById("middle_name").value;
-    let last_name = document.getElementById("last_name").value;
-    let phone = document.getElementById("phone").value;
-    let email = document.getElementById("email").value;
-    // let password = document.getElementById("password").value;
-    let body = {
-      username: username,
-      password: password,
-      first_name: first_name,
-      middle_name: middle_name,
-      last_name: last_name,
-      phone: phone,
-      email: email,
-      btnRegister: "register",
+    let inputs = Array.from(event.target);
+
+    console.log("inputs: ", inputs);
+    let data = {
+      officer_id: this.state.currentUser.id,
+      id_type: inputs[1].options[inputs[1].options.selectedIndex].value,
+      id_number: inputs[2].value,
+      first_name: inputs[3].value,
+      middle_name: inputs[4].value,
+      last_name: inputs[5].value,
+      phone: inputs[6].value,
+      email: inputs[7].value,
+      dob: inputs[8].value,
+      file_picture: null,
+      file_fingerprint: null,
+      education: inputs[11].options[inputs[11].options.selectedIndex].value,
+      region_of_birth:
+        inputs[13].options[inputs[13].options.selectedIndex].value,
+      district_of_birth: inputs[14].value,
+      ward_of_birth: inputs[15].value,
+      street_of_birth: inputs[16].value,
+      ethnicity: inputs[17].value,
+      region_of_residence:
+        inputs[19].options[inputs[19].options.selectedIndex].value,
+      district_of_residence: inputs[20].value,
+      ward_of_residence: inputs[21].value,
+      street_of_residence: inputs[22].value,
     };
-    console.log("body: ", body);
-    this.signup(body);
+    if (inputs[9].files) {
+      this.readBase64(inputs[9].files[0])
+        .then((result) => {
+          // console.info("base64 result: ", result);
+          data.file_picture = result;
+          data.btnCreateFile = "new_file";
+          if (inputs[10].files) {
+            this.readBase64(inputs[10].files[0])
+              .then((result) => {
+                console.info("base64 result: ", result);
+                data.file_fingerprint = result;
+                this.createFile(data);
+              })
+              .catch((e) => {
+                console.error("error: ", e);
+              });
+          } else this.createFile(data);
+        })
+        .catch((e) => {
+          console.error("error: ", e);
+        });
+    } else {
+      if (inputs[10].files) {
+        this.readBase64(inputs[10].files[0])
+          .then((result) => {
+            // console.info("base64 result: ", result);
+            data.file_fingerprint = result;
+            this.createFile(data);
+          })
+          .catch((e) => {
+            console.error("error: ", e);
+          });
+      } else this.createFile(data);
+    }
   }
-  signup(user) {
+  readBase64(file) {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onError = (e) => reject(e);
+    });
+  }
+  createFile(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify(user),
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then((response) => {
@@ -78,7 +131,7 @@ class File extends React.Component {
         let feedback = response.msg;
         if (response.success == 0) {
           this.setState({ hasSuccessFeedback: true, feedback: feedback });
-          this.props.onUpdate(response.users);
+          this.props.onUpdate(response.files);
           this.handleCancel();
         } else {
           this.setState({ hasFailFeedback: true, feedback: response.msg });
@@ -95,268 +148,226 @@ class File extends React.Component {
       });
   }
   render() {
-    return (
-      <div className="my-2 col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1">
-        <h3 className="my-4">New Offender Form</h3>
-
-        {this.state.feedback !== null ? (
-          <div
-            className={
-              "alert-" +
-              (this.state.hasFailFeedback ? "danger" : "success") +
-              " py-2 my-2 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1"
-            }
+    if (this.state.next) {
+      return <OffenseForm onCancelForm={this.handleFormClose} />;
+    } else {
+      return (
+        <div className="my-2 col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1">
+          <h3 className="my-4">New Offender File</h3>
+          <form
+            className="col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1"
+            onSubmit={this.handleSubmit}
           >
-            {this.state.feedback}
-          </div>
-        ) : null}
-        <form
-          className="col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1"
-          onSubmit={this.handleSubmit}
-        >
-          <fieldset className="border p-2 my-5">
-            <legend className="w-auto text-left ">Personal Information</legend>
-            <div className="row">
-              <div className="col py-2">
-                <select
-                  className="form-control my-2"
-                  id="id_type"
-                  name="id_type"
-                  type="text"
-                  required
-                >
-                  <option>--Select ID Type--</option>
-                  <option>National ID</option>
-                  <option>Passport</option>
-                  <option>Voter ID</option>
-                  <option>Driving License</option>
-                </select>
-              </div>{" "}
-              <div className="col py-2">
-                <input
-                  className="form-control my-2"
-                  id="id_number"
-                  placeholder="ID Number"
-                  name="id_number"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col py-2">
-                <input
-                  className="form-control my-2"
-                  id="first_name"
-                  placeholder="First Name"
-                  name="first_name"
-                  type="text"
-                  required
-                />
-              </div>{" "}
-              <div className="col py-2">
-                <input
-                  className="form-control my-2"
-                  id="middle_name"
-                  placeholder="Middle Name"
-                  name="middle_name"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col py-2">
-                <input
-                  className="form-control my-2"
-                  id="last_name"
-                  placeholder="Last Name"
-                  name="last_name"
-                  type="text"
-                  required
-                />
-              </div>{" "}
-              <div className="col py-2">
-                <input
-                  className="form-control my-2"
-                  id="phone"
-                  placeholder="Phone Number"
-                  name="phone"
-                  type="text"
-                  required
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col py-2">
-                <input
-                  className="form-control my-2"
-                  id="email"
-                  placeholder="E-mail"
-                  name="email"
-                  type="email"
-                />
-              </div>
-              <div className="col py-2">
-                <input
-                  className="form-control my-2"
-                  id="dob"
-                  placeholder="Date of Birth"
-                  name="dob"
-                  type="date"
-                  data-toggle="tooltip"
-                  data-placement="top"
-                  title="Date of birth"
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col py-2">
-                <select
-                  id="education"
-                  name="education"
-                  className="form-control"
-                >
-                  <option>--Select Level of Education--</option>
-                  <option>No school</option>
-                  <option>Primary School</option>
-                  <option>Secondary School</option>
-                  <option>Higher Education</option>
-                </select>
-              </div>
-              <div className="col"></div>
-            </div>
             <fieldset className="border p-2 my-5">
-              <legend className="w-auto text-left small">Place of Birth</legend>
-              <div className="row">
-                <div className="col py-2">
-                  <select
-                    className="form-control"
-                    id="city_of_birth"
-                    name="city_of_birth"
-                  >
-                    <option>--Select Region--</option>
-                    {getCityNames("asc").map((c) => {
-                      return <option key={c}>{c}</option>;
-                    })}
-                  </select>
-                </div>
-                <div className="col py-2">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="district_of_birth"
-                    name="district_of_birth"
-                    placeholder="District"
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col py-2">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="ward_of_birth"
-                    name="ward_of_birth"
-                    placeholder="Ward"
-                  />
-                </div>
-                <div className="col py-2">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="street_of_birth"
-                    name="street_of_birth"
-                    placeholder="Street"
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col py-2">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="ethnicity"
-                    name="ethnicity"
-                    placeholder="Ethnicity/Tribe"
-                  />
-                </div>
-                <div className="col"></div>
-              </div>
-            </fieldset>
-          </fieldset>
-          <fieldset className="border p-2 my-5">
-            <legend className="w-auto text-left ">Residential Address</legend>
-            <div className="row">
-              <div className="col py-2">
-                <select className="form-control" id="city" name="city">
-                  <option>--Select Region--</option>
-                  {getCityNames("asc").map((c) => {
-                    return <option key={c}>{c}</option>;
-                  })}
-                </select>
-              </div>
-              <div className="col py-2">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="district"
-                  name="district"
-                  placeholder="District"
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col py-2">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="ward"
-                  name="ward"
-                  placeholder="Ward"
-                />
-              </div>
-              <div className="col py-2">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="street"
-                  name="street"
-                  placeholder="Street"
-                />
-              </div>
-            </div>
-          </fieldset>
-          <fieldset className="border p-2 my-5">
-            <legend className="w-auto text-left ">Charges/Offenses</legend>
-            <select id="offense" name="offense" className="form-control">
-              <option>--Select Offense--</option>
-              {this.state.offenses.map((of) => {
-                return (
-                  <option key={of.id} value={of.id}>
-                    {of.name}
-                  </option>
-                );
-              })}
-            </select>
-            <div className="form-group">
-              <label htmlFor="description" className="text-left">
-                Description
-              </label>
-              <textarea
-                id="description"
-                name="textarea"
-                className="form-control"
-              ></textarea>
-            </div>
-            <fieldset className="border p-2 my-5">
-              <legend className="w-auto text-left small">
-                Crime Area/Location
+              <legend className="w-auto text-left ">
+                Personal Information
               </legend>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <select
+                    className="form-control my-2"
+                    id="id_type"
+                    name="id_type"
+                    type="text"
+                    required
+                  >
+                    <option>--Select ID Type--</option>
+                    <option>National ID</option>
+                    <option>Passport</option>
+                    <option>Voter ID</option>
+                    <option>Driving License</option>
+                  </select>
+                </div>{" "}
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <input
+                    className="form-control my-2"
+                    id="id_number"
+                    placeholder="ID Number"
+                    name="id_number"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <input
+                    className="form-control my-2"
+                    id="first_name"
+                    placeholder="First Name"
+                    name="first_name"
+                    type="text"
+                    required
+                  />
+                </div>{" "}
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <input
+                    className="form-control my-2"
+                    id="middle_name"
+                    placeholder="Middle Name"
+                    name="middle_name"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <input
+                    className="form-control my-2"
+                    id="last_name"
+                    placeholder="Last Name"
+                    name="last_name"
+                    type="text"
+                    required
+                  />
+                </div>{" "}
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <input
+                    className="form-control my-2"
+                    id="phone"
+                    placeholder="Phone Number"
+                    name="phone"
+                    type="text"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <input
+                    className="form-control my-2"
+                    id="email"
+                    placeholder="E-mail"
+                    name="email"
+                    type="email"
+                  />
+                </div>
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <input
+                    className="form-control my-2"
+                    id="dob"
+                    placeholder="Date of Birth"
+                    name="dob"
+                    type="date"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Date of birth"
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <label htmlFor="file_picture">Upload Profile Picture</label>
+                  <input
+                    className="form-control my-2"
+                    id="file_picture"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Upload Profile Picture"
+                    name="file_picture"
+                    type="file"
+                    accept="image/*"
+                  />
+                </div>
+                <div className="text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <label htmlFor="file_fingerprint">Upload Fingerprint</label>
+                  <input
+                    className="form-control my-2"
+                    id="file_fingerprint"
+                    placeholder="Date of Birth"
+                    name="file_fingerprint"
+                    type="file"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Upload Fingerprint"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <select
+                    id="education"
+                    name="education"
+                    className="form-control"
+                  >
+                    <option>--Select Level of Education--</option>
+                    <option>No school</option>
+                    <option>Primary School</option>
+                    <option>Secondary School</option>
+                    <option>Higher Education</option>
+                  </select>
+                </div>
+                <div className="col"></div>
+              </div>
+              <fieldset className="border p-2 my-5">
+                <legend className="w-auto text-left small">
+                  Place of Birth
+                </legend>
+                <div className="row">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                    <select
+                      className="form-control"
+                      id="region_of_birth"
+                      name="region_of_birth"
+                    >
+                      <option>--Select Region--</option>
+                      {getCityNames("asc").map((c) => {
+                        return <option key={c}>{c}</option>;
+                      })}
+                    </select>
+                  </div>
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="district_of_birth"
+                      name="district_of_birth"
+                      placeholder="District"
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="ward_of_birth"
+                      name="ward_of_birth"
+                      placeholder="Ward"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="street_of_birth"
+                      name="street_of_birth"
+                      placeholder="Street"
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="ethnicity"
+                      name="ethnicity"
+                      placeholder="Ethnicity/Tribe"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2"></div>
+                </div>
+              </fieldset>
+            </fieldset>
+            <fieldset className="border p-2 my-5">
+              <legend className="w-auto text-left ">Residential Address</legend>
+              <div className="row">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <select
                     className="form-control"
-                    id="city_of_crime"
-                    name="city_of_crime"
+                    id="region_of_residence"
+                    name="region_of_residence"
                   >
                     <option>--Select Region--</option>
                     {getCityNames("asc").map((c) => {
@@ -364,78 +375,66 @@ class File extends React.Component {
                     })}
                   </select>
                 </div>
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
-                    id="district_of_crime"
-                    name="district_of_crime"
+                    id="district_of_residence"
+                    name="district_of_residence"
                     placeholder="District"
                   />
                 </div>
               </div>
               <div className="row">
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
-                    id="ward_of_crime"
-                    name="ward_of_crime"
+                    id="ward_of_residence"
+                    name="ward_of_residence"
                     placeholder="Ward"
                   />
                 </div>
-                <div className="col py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
                     type="text"
                     className="form-control"
-                    id="street_of_crime"
-                    name="street_of_crime"
+                    id="street_of_residence"
+                    name="street_of_residence"
                     placeholder="Street"
                   />
                 </div>
               </div>
-              <div className="row">
-                <div className="col py-2">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="victims"
-                    name="victims"
-                    placeholder="Victims of crime"
-                  />
-                </div>
-                <div className="col"></div>
-              </div>
             </fieldset>
-          </fieldset>
 
-          <div className="row form-group offset-md-1 offset-xl-1 offset-lg-1 my-3 px-2">
-            {this.state.isLoading ? (
-              <button className="btn btn-primary disabled my-2 mx-2 col-md-3 col-lg-3 col-xl-3">
-                <Spinner animation="border" variant="light" />
-              </button>
-            ) : (
+            <div className="row form-group offset-md-1 offset-xl-1 offset-lg-1 my-3 px-2">
+              {this.state.isLoading ? (
+                <button className="btn btn-primary disabled my-2 mx-2 col-md-3 col-lg-3 col-xl-3">
+                  <Spinner animation="border" variant="light" />
+                </button>
+              ) : (
+                <input
+                  type="submit"
+                  name="btnRegister"
+                  id="btnRegister"
+                  className="btn btn-primary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
+                  value="PROCEED"
+                />
+              )}
+              <span className="col-md-4 col-lg-4 col-xl-4"></span>
               <input
-                type="submit"
-                name="btnRegister"
-                id="btnRegister"
-                className="btn btn-primary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
-                value="PROCEED"
+                onClick={this.handleCancel}
+                type="button"
+                name="btnCancel"
+                id="btnCancel"
+                className="btn btn-secondary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
+                value="CANCEL"
               />
-            )}
-            <span className="col-md-4 col-lg-4 col-xl-4"></span>
-            <input
-              onClick={this.handleCancel}
-              type="button"
-              name="btnCancel"
-              id="btnCancel"
-              className="btn btn-secondary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
-              value="CANCEL"
-            />
-          </div>
-        </form>
-      </div>
-    );
+            </div>
+          </form>
+        </div>
+      );
+    }
   }
 }
 
