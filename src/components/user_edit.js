@@ -9,7 +9,6 @@ class UserEdit extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      authenticated: true,
       currentUser: props.currentUser,
       feedback: null,
       isLoading: false,
@@ -24,7 +23,7 @@ class UserEdit extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
   handleCancel() {
-    this.props.onCancelForm(true);
+    this.props.onClose();
   }
   handleChange(e) {
     let target = e.target;
@@ -143,7 +142,7 @@ class UserEdit extends React.Component {
                 className="my-2 form-control"
                 id="first_name"
                 name="first_name"
-                value={this.state.user.first_name}
+                defaultValue={this.state.user.first_name}
                 onChange={this.handleChange}
               />
               <label htmlFor="middle_name">Middle Name</label>
@@ -151,7 +150,7 @@ class UserEdit extends React.Component {
                 className="my-2 form-control"
                 id="middle_name"
                 name="middle_name"
-                value={this.state.user.middle_name}
+                defaultValue={this.state.user.middle_name}
                 onChange={this.handleChange}
               />
               <label htmlFor="last_name">Last Name</label>
@@ -159,7 +158,7 @@ class UserEdit extends React.Component {
                 className="my-2 form-control"
                 id="last_name"
                 name="last_name"
-                value={this.state.user.last_name}
+                defaultValue={this.state.user.last_name}
                 onChange={this.handleChange}
               />
 
@@ -168,7 +167,7 @@ class UserEdit extends React.Component {
                 className="my-2 form-control"
                 id="phone"
                 name="phone"
-                value={this.state.user.phone}
+                defaultValue={this.state.user.phone}
                 onChange={this.handleChange}
               />
               <label htmlFor="email">E-mail</label>
@@ -176,7 +175,7 @@ class UserEdit extends React.Component {
                 className="my-2 form-control"
                 id="email"
                 name="email"
-                value={this.state.user.email}
+                defaultValue={this.state.user.email}
                 onChange={this.handleChange}
               />
               <label htmlFor="username">Officer ID</label>
@@ -184,7 +183,7 @@ class UserEdit extends React.Component {
                 className="my-2 form-control"
                 id="username"
                 name="username"
-                value={this.state.user.username}
+                defaultValue={this.state.user.username}
                 onChange={this.handleChange}
               />
               <div className="row form-group offset-md-1 offset-xl-1 offset-lg-1 my-3 px-2">

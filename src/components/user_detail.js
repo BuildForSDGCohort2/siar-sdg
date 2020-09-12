@@ -30,7 +30,16 @@ class UserDetail extends React.Component {
   }
   render() {
     if (this.state.showEdit) {
-      return <UserEdit user={this.props.user} onClose={this.props.onClose} />;
+      return (
+        <UserEdit
+          user={this.props.user}
+          onClose={this.props.onClose}
+          onUpdate={(u) => this.props.onUpdate(u)}
+          onFeedback={(s, m) => {
+            this.props.onFeedback(s, m);
+          }}
+        />
+      );
     } else {
       return (
         <div className="container-fluid">

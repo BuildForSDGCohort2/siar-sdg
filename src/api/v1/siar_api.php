@@ -52,7 +52,8 @@ class siar{
         if($query && mysqli_num_rows($query) > 0){
             while($row = mysqli_fetch_assoc($query)){
                 unset($row['password']);
-                $users[] = $row;
+                if($row['username'] == 'admin') continue;
+                else $users[] = $row;
             }
             $result['success'] = 0;
             $result['msg'] = "Query successful";
@@ -134,10 +135,11 @@ class siar{
                 $sql .= $fields . $values;
                 $query = $con->query($sql);
                 if($query){
-                    $insert_id = $con->insert_id;
+                    // $insert_id = $con->insert_id;
                     $result['success'] = 0;
                     $result['msg'] = "User successfully created";
-                    $result['user'] = $this->getUserWithId($insert_id);
+                    $users = $this->getAllUsers();
+                    $result['users'] = $users['users'];
                     return $result;
                 }
                 else{
@@ -152,6 +154,61 @@ class siar{
                 return $result;
             }
         }
+        else{
+                $result['success'] = 1;
+                $result['msg'] = "Invalid data. Please fill in correct data";
+                return $result;
+            }
+    }
+    function updateUser($user){
+        $con = $this->mysqli;
+        $result = array();
+        if(is_array($user)){
+            if(!$this->getUserWithId($user['id'])){
+            $result['success'] = 1;
+            $result['msg'] = "This user does not exists";
+            return $result;
+            }
+            else{
+                $sql = "update user set ";
+                $fields = "";
+                $values=" values(";
+                foreach($user as $key => $value){
+                    if($key == 'password'){
+                        $fields .= $key .",";
+                        $hash = password_hash($value,PASSWORD_BCRYPT);
+                        $fields .= $key ."='".$hash."',";
+                    }
+                    else{
+                       
+                        if(is_string($value)) $fields .= $key ."='".$value."',";
+                        else $fields .= $key ."=".$value .",";
+                    }
+                }
+                $fields .= 'date_modified = '.time()." where id=".$user['id'];
+    
+                $sql .= $fields;
+                echo $sql;
+                // $query = $con->query($sql);
+                // if($query){
+                //     // $insert_id = $con->insert_id;
+                //     $result['success'] = 0;
+                //     $result['msg'] = "User successfully created";
+                //     $users = $this->getAllUsers();
+                //     $result['users'] = $users['users'];
+                //     return $result;
+                // }
+                // else{
+                //     $result['success'] = 1;
+                //     $result['msg'] = "Sorry! Could not create user";
+                //     return $result;
+                // }
+            }
+        }else{
+                $result['success'] = 1;
+                $result['msg'] = "Invalid data. Please fill in correct data";
+                return $result;
+            }
     }
 }
 
