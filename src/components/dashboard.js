@@ -184,6 +184,7 @@ class Dashboard extends React.Component {
               onUpdate={(files) => this.updateFiles(files)}
               onFormClose={() => this.handleFormClose()}
               files={this.state.files}
+              officers={this.state.users}
               currentUser={this.state.currentUser}
               authenticated={this.state.authenticated}
             />

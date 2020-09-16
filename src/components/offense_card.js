@@ -3,6 +3,10 @@ import config from "../config.json";
 
 const OffenseCard = (props) => {
   const [showDetail, setShowDetail] = useState(false);
+  const showEditOffense = (offense) => {
+    props.showOffenseForm(offense);
+    props.onClose();
+  };
   return (
     <div className="card m-2 text-left">
       <div className="card-header bg-info">{props.data.offense}</div>
@@ -17,7 +21,7 @@ const OffenseCard = (props) => {
                 {props.data.date_of_crime +
                   " at " +
                   props.data.time_of_crime +
-                  "on  " +
+                  " on  " +
                   props.data.street_of_crime +
                   " in " +
                   props.data.ward_of_crime +
@@ -28,13 +32,24 @@ const OffenseCard = (props) => {
               </p>
               <span>Case Officer</span>
               <p>
-                {props.data.officer.first_name +
+                {props.data.case_officer_detail.first_name +
                   " " +
-                  props.data.officer.last_name +
-                  "(" +
-                  props.data.officer.username +
+                  props.data.case_officer_detail.last_name +
+                  " (" +
+                  props.data.case_officer_detail.username +
                   ")"}
               </p>
+              <span>Last Update Officer</span>
+              <p>
+                {props.data.attending_officer.first_name +
+                  " " +
+                  props.data.attending_officer.last_name +
+                  " (" +
+                  props.data.attending_officer.username +
+                  ")"}
+              </p>
+              <span>Victims</span>
+              <p>{props.data.victims}</p>
             </div>
           </>
         ) : null}
@@ -45,7 +60,12 @@ const OffenseCard = (props) => {
           >
             {!showDetail ? "View Details" : "Show Less"}
           </button>
-          <button className="btn btn-info">Edit</button>
+          <button
+            className="btn btn-info"
+            onClick={() => showEditOffense(props.data)}
+          >
+            Edit
+          </button>
         </div>
       </div>
     </div>

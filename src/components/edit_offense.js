@@ -6,7 +6,7 @@ import Dashboard from "./dashboard";
 import { Spinner } from "react-bootstrap";
 import { getCityNames } from "postcodes-tz";
 
-class OffenseForm extends React.Component {
+class OffenseEdit extends React.Component {
   constructor(props) {
     super(props);
     let offenses = [
@@ -21,47 +21,66 @@ class OffenseForm extends React.Component {
       { id: 8, name: "Cyber Crime" },
       { id: 9, name: "Murder" },
     ];
-    // console.log("cities: ", getCityNames("asc"));
+    console.log("cities: ", props.data);
     this.state = {
       authenticated: true,
-      user: props.currentUser,
+      currentUser: props.currentUser,
       feedback: null,
       isLoading: false,
       hasSuccessFeedback: false,
       hasFailFeedback: false,
       feedback: null,
       offenses: offenses,
+      offense: props.data,
+      editedOffense: props.offense,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.recordOffense = this.recordOffense.bind(this);
+    this.updateOffense = this.updateOffense.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.text2Date = this.text2Date.bind(this);
   }
+  handleChange(e) {
+    let el = e.target;
+    var val = null;
+    let off = this.state.offense;
+    if (el.id == "offense") val = el.options[el.options.selectedIndex].value;
+    if (el.id == "description") val = el.value;
+    if (el.id == "region_of_crime")
+      val = el.options[el.options.selectedIndex].value;
+    if (el.id == "district_of_crime") val = el.value;
+    if (el.id == "ward_of_crime") val = el.value;
+    if (el.id == "street_of_crime") val = el.value;
+    if (el.id == "date_of_crime") val = el.value;
+    if (el.id == "time_of_crime") val = el.value;
+    if (el.id == "victims") val = el.value;
+    if (el.id == "case_officer")
+      val = el.options[el.options.selectedIndex].value;
+
+    off[el.id] = val;
+    this.setState({ offense: off });
+  }
+
   handleCancel() {
     this.props.onClose();
   }
   handleSubmit(event) {
     event.preventDefault();
     this.setState({ isLoading: true });
-    let inputs = Array.from(event.target);
-    let body = {
-      file_id: this.props.file.id,
-      officer_id: this.props.currentUser.id,
-      offense: inputs[1].options[inputs[1].options.selectedIndex].value,
-      description: inputs[2].value,
-      region_of_crime: inputs[4].options[inputs[4].options.selectedIndex].value,
-      district_of_crime: inputs[5].value,
-      ward_of_crime: inputs[6].value,
-      street_of_crime: inputs[7].value,
-      victims: inputs[8].value,
-      date_of_crime: inputs[9].value,
-      time_of_crime: inputs[10].value,
-      case_officer: inputs[11].options[inputs[11].options.selectedIndex].value,
-      btnSubmitOffense: "submit",
-    };
+    let body = this.state.offense;
+    body.officer_id = this.state.currentUser.id;
+    delete body.attending_officer;
+    delete body.case_officer_detail;
+    body.btnUpdateOffense = "submit";
+
     console.log("body: ", body);
-    this.recordOffense(body);
+    this.updateOffense(body);
   }
-  recordOffense(data) {
+  text2Date(event) {
+    if (event.target.id == "date_of_crime") event.target.type = "date";
+    else event.target.type = "time";
+  }
+  updateOffense(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
       headers: {
@@ -79,22 +98,22 @@ class OffenseForm extends React.Component {
           this.props.onUpdate(response.files);
           this.handleCancel();
         } else {
-          this.setState({ hasFailFeedback: true, feedback: response.msg });
+          this.setState({ hasSuccessFeedback: false, feedback: response.msg });
         }
-        this.props.onFeedback(feedback, this.state.hasSuccessFeedback);
+        // this.props.onFeedback(feedback, this.state.hasSuccessFeedback);
       })
       .catch((error) => {
         console.error("error: ", error);
         this.setState(
           {
-            hasFailFeedback: true,
+            hasSuccessFeedback: false,
             isLoading: false,
             feedback: "An error occurred!",
           },
           () => {
             this.props.onFeedback(
               this.state.feedback,
-              this.state.hasFailFeedback
+              this.state.hasSuccessFeedback
             );
           }
         );
@@ -103,7 +122,7 @@ class OffenseForm extends React.Component {
   render() {
     return (
       <div className="my-2 col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1">
-        <h3 className="my-4">Offense Details</h3>
+        <h3 className="my-4">Edit Offense Details</h3>
 
         <form
           className="col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1"
@@ -111,23 +130,55 @@ class OffenseForm extends React.Component {
         >
           <fieldset className="border p-2 my-5">
             <legend className="w-auto text-left ">Charges/Offenses</legend>
-            <select id="offense" name="offense" className="form-control">
-              <option value="none">--Select Offense--</option>
-              {this.state.offenses.map((of) => {
-                return (
-                  <option key={of.id} value={of.name}>
-                    {of.name}
-                  </option>
-                );
-              })}
-            </select>
+            <div className="row">
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left">
+                <label htmlFor="case_officer">Case Officer</label>
+                <select
+                  id="case_officer"
+                  name="case_officer"
+                  className="form-control"
+                  value={this.state.offense.case_officer}
+                  onChange={this.handleChange}
+                >
+                  <option value="none">--Select Case Officer--</option>
+                  {this.props.officers.map((of) => {
+                    return (
+                      <option key={of.id} value={of.id}>
+                        {of.username}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left">
+                <label htmlFor="offense">Offense</label>
+                <select
+                  id="offense"
+                  name="offense"
+                  className="form-control"
+                  value={this.state.offense.offense}
+                  onChange={this.handleChange}
+                >
+                  <option value="none">--Select Offense--</option>
+                  {this.state.offenses.map((of) => {
+                    return (
+                      <option key={of.id} value={of.name}>
+                        {of.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            </div>
             <div className="form-group text-left">
               <label htmlFor="description">Description</label>
               <textarea
+                value={this.state.offense.description}
+                onChange={this.handleChange}
                 id="description"
                 name="textarea"
                 className="form-control"
-              ></textarea>
+              />
             </div>
             <fieldset className="border p-2 my-5">
               <legend className="w-auto text-left small">
@@ -136,6 +187,8 @@ class OffenseForm extends React.Component {
               <div className="row">
                 <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <select
+                    value={this.state.offense.region_of_crime}
+                    onChange={this.handleChange}
                     className="form-control"
                     id="region_of_crime"
                     name="region_of_crime"
@@ -148,6 +201,8 @@ class OffenseForm extends React.Component {
                 </div>
                 <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
+                    value={this.state.offense.district_of_crime}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                     id="district_of_crime"
@@ -159,6 +214,8 @@ class OffenseForm extends React.Component {
               <div className="row">
                 <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
+                    value={this.state.offense.ward_of_crime}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                     id="ward_of_crime"
@@ -168,6 +225,8 @@ class OffenseForm extends React.Component {
                 </div>
                 <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
+                    value={this.state.offense.street_of_crime}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                     id="street_of_crime"
@@ -179,6 +238,8 @@ class OffenseForm extends React.Component {
               <div className="row">
                 <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
                   <input
+                    value={this.state.offense.victims}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                     id="victims"
@@ -189,45 +250,31 @@ class OffenseForm extends React.Component {
                 <div className="col"></div>
               </div>
               <div className="row">
-                <div className=" text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left">
                   <label htmlFor="date_of_crime">Date of Crime</label>
                   <input
-                    type="date"
+                    value={this.state.offense.date_of_crime}
+                    onChange={this.handleChange}
+                    type="text"
                     className="form-control"
                     id="date_of_crime"
                     name="date_of_crime"
                     placeholder="Date of crime"
                   />
                 </div>
-                <div className=" text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left">
                   <label htmlFor="date_of_crime">Time of Crime</label>
                   <input
-                    type="time"
+                    value={this.state.offense.time_of_crime}
+                    onChange={this.handleChange}
+                    onFocus={this.text2Date}
+                    type="text"
                     className="form-control"
                     id="time_of_crime"
                     name="time_of_crime"
                     placeholder="Time of crime"
                   />
                 </div>
-              </div>
-              <div className="row">
-                <div className=" text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
-                  <label htmlFor="case_officer">Case Officer</label>
-                  <select
-                    className="form-control"
-                    id="case_officer"
-                    name="case_officer"
-                  >
-                    {this.props.officers.map((off) => {
-                      return (
-                        <option key={off.id} value={off.id}>
-                          {off.username}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2"></div>
               </div>
             </fieldset>
           </fieldset>
@@ -262,4 +309,4 @@ class OffenseForm extends React.Component {
   }
 }
 
-export default OffenseForm;
+export default OffenseEdit;
