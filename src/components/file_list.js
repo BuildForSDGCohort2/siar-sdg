@@ -88,12 +88,22 @@ class FileList extends React.Component {
               (this.state.hasFeedback ? "success" : "danger") +
               " py-2"
             }
+            role="alert"
           >
             {this.state.feedback}
+            <button
+              type="button"
+              className="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
         ) : null}
         {this.state.showForm ? (
           <File
+            officers={this.props.officers}
             onFeedback={(msg, success) => this.handleFeedback(msg, success)}
             onUpdate={(list) => this.updateFiles(list)}
             currentUser={this.state.currentUser}
@@ -147,8 +157,9 @@ class FileList extends React.Component {
           </>
         ) : (
           <FileDetail
-            onFeedback={(s, m) => this.handleFeedback(s, m)}
+            onFeedback={(m, s) => this.handleFeedback(m, s)}
             file={this.state.selectedFile}
+            officers={this.props.officers}
             currentUser={this.props.currentUser}
             onClose={this.handleCloseDetail}
             onUpdate={(list) => this.updateFiles(list)}

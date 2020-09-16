@@ -7,7 +7,7 @@ import { Spinner } from "react-bootstrap";
 import { getCityNames } from "postcodes-tz";
 import OffenseForm from "./new_offense";
 
-class File extends React.Component {
+class FileEdit extends React.Component {
   constructor(props) {
     super(props);
     let offenses = [
@@ -31,82 +31,91 @@ class File extends React.Component {
       hasSuccessFeedback: false,
       hasFailFeedback: false,
       feedback: null,
-      offenses: offenses,
+      file: props.file,
       next: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.createFile = this.createFile.bind(this);
+    this.updateFile = this.updateFile.bind(this);
     this.readBase64 = this.readBase64.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  handleChange(e) {
+    let el = e.target;
+    var val = null;
+    let file = this.state.file;
+    if (el.id == "id_type") val = el.options[el.options.selectedIndex].value;
+    if (el.id == "id_number") val = el.value;
+    if (el.id == "first_name") val = el.value;
+    if (el.id == "middle_name") val = el.value;
+    if (el.id == "last_name") val = el.value;
+    if (el.id == "phone") val = el.value;
+    if (el.id == "email") val = el.value;
+    if (el.id == "gender") val = el.options[el.options.selectedIndex].value;
+    if (el.id == "ethnicity") val = el.value;
+    if (el.id == "region_of_birth")
+      val = el.options[el.options.selectedIndex].value;
+    if (el.id == "district_of_birth") val = el.value;
+    if (el.id == "ward_of_birth") val = el.value;
+    if (el.id == "street_of_birth") val = el.value;
+    if (el.id == "region_of_residence")
+      val = el.options[el.options.selectedIndex].value;
+    if (el.id == "district_of_residence") val = el.value;
+    if (el.id == "ward_of_residence") val = el.value;
+    if (el.id == "street_of_residence") val = el.value;
+    if (el.id == "dob") val = el.value;
+
+    file[el.id] = val;
+    this.setState({ file: file });
   }
   handleCancel() {
-    this.props.onCancelForm(true);
+    this.props.onClose();
   }
   handleSubmit(event) {
     event.preventDefault();
     this.setState({ isLoading: true });
-    let inputs = Array.from(event.target);
-
-    console.log("inputs: ", inputs);
-    let data = {
-      officer_id: this.state.currentUser.id,
-      id_type: inputs[1].options[inputs[1].options.selectedIndex].value,
-      id_number: inputs[2].value,
-      first_name: inputs[3].value,
-      middle_name: inputs[4].value,
-      last_name: inputs[5].value,
-      gender: inputs[6].options[inputs[6].options.selectedIndex].value,
-      phone: inputs[7].value,
-      email: inputs[8].value,
-      dob: inputs[9].value,
-      file_picture: null,
-      file_fingerprint: null,
-      education: inputs[12].options[inputs[12].options.selectedIndex].value,
-      region_of_birth:
-        inputs[14].options[inputs[14].options.selectedIndex].value,
-      district_of_birth: inputs[15].value,
-      ward_of_birth: inputs[16].value,
-      street_of_birth: inputs[17].value,
-      ethnicity: inputs[18].value,
-      region_of_residence:
-        inputs[20].options[inputs[20].options.selectedIndex].value,
-      district_of_residence: inputs[21].value,
-      ward_of_residence: inputs[22].value,
-      street_of_residence: inputs[23].value,
-    };
-    if (inputs[10].files) {
-      this.readBase64(inputs[10].files[0])
+    let data = this.state.file;
+    delete data.case_officer_detail;
+    delete data.attending_officer;
+    delete data.offenses;
+    delete data.age;
+    data.officer_id = this.props.currentUser.id;
+    data.btnUpdateFile = "submit";
+    let profile = document.getElementById("file_picture");
+    let fingerprint = document.getElementById("file_fingerprint");
+    if (profile.files.length > 0) {
+      this.readBase64(profile.files[0])
         .then((result) => {
           // console.info("base64 result: ", result);
-          data.file_picture = result;
-          data.btnCreateFile = "new_file";
-          if (inputs[11].files) {
-            this.readBase64(inputs[11].files[0])
+          data.picture = result;
+
+          if (fingerprint.files.length > 0) {
+            this.readBase64(fingerprint.files[0])
               .then((result) => {
                 console.info("base64 result: ", result);
-                data.file_fingerprint = result;
-                this.createFile(data);
+                data.fingerprint = result;
+                this.updateFile(data);
               })
               .catch((e) => {
                 console.error("error: ", e);
               });
-          } else this.createFile(data);
+          } else this.updateFile(data);
         })
         .catch((e) => {
           console.error("error: ", e);
         });
     } else {
-      if (inputs[11].files) {
-        this.readBase64(inputs[11].files[0])
+      if (fingerprint.files.length > 0) {
+        this.readBase64(fingerprint.files[0])
           .then((result) => {
             // console.info("base64 result: ", result);
-            data.file_fingerprint = result;
-            this.createFile(data);
+            data.fingerprint = result;
+            this.updateFile(data);
           })
           .catch((e) => {
             console.error("error: ", e);
           });
-      } else this.createFile(data);
+      } else this.updateFile(data);
     }
   }
   readBase64(file) {
@@ -117,7 +126,7 @@ class File extends React.Component {
       reader.onError = (e) => reject(e);
     });
   }
-  createFile(data) {
+  updateFile(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
       headers: {
@@ -154,7 +163,7 @@ class File extends React.Component {
     } else {
       return (
         <div className="my-2 col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1">
-          <h3 className="my-4">New Offender File</h3>
+          <h3 className="my-4">Update Offender File</h3>
           <form
             className="col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1"
             onSubmit={this.handleSubmit}
@@ -164,8 +173,11 @@ class File extends React.Component {
                 Personal Information
               </legend>
               <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="id_type">ID Type</label>
                   <select
+                    value={this.state.file.id_type}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="id_type"
                     name="id_type"
@@ -179,8 +191,11 @@ class File extends React.Component {
                     <option>Driving License</option>
                   </select>
                 </div>{" "}
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="id_number">ID Number</label>
                   <input
+                    value={this.state.file.id_number}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="id_number"
                     placeholder="ID Number"
@@ -190,8 +205,11 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="first_name">First Name</label>
                   <input
+                    value={this.state.file.first_name}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="first_name"
                     placeholder="First Name"
@@ -200,8 +218,11 @@ class File extends React.Component {
                     required
                   />
                 </div>{" "}
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="last_name">Middle Name</label>
                   <input
+                    value={this.state.file.middle_name}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="middle_name"
                     placeholder="Middle Name"
@@ -211,8 +232,11 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="middle_name">Last Name</label>
                   <input
+                    value={this.state.file.last_name}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="last_name"
                     placeholder="Last Name"
@@ -221,7 +245,8 @@ class File extends React.Component {
                     required
                   />
                 </div>
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="gender">Gender</label>{" "}
                   <select
                     className="form-control my-2"
                     id="gender"
@@ -233,11 +258,12 @@ class File extends React.Component {
                     <option>Female</option>
                     <option>Male</option>
                   </select>
-                </div>{" "}
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                </div>
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="phone">Phone</label>
                   <input
+                    value={this.state.file.phone}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="phone"
                     placeholder="Phone Number"
@@ -246,8 +272,11 @@ class File extends React.Component {
                     required
                   />
                 </div>
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="email">Email</label>
                   <input
+                    value={this.state.file.email}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="email"
                     placeholder="E-mail"
@@ -255,14 +284,18 @@ class File extends React.Component {
                     type="email"
                   />
                 </div>
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left">
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
                   <label htmlFor="dob">Date of Birth</label>
                   <input
+                    value={this.state.file.dob}
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="dob"
                     placeholder="Date of Birth"
                     name="dob"
-                    type="date"
+                    type="text"
                     data-toggle="tooltip"
                     data-placement="top"
                     title="Date of birth"
@@ -271,8 +304,9 @@ class File extends React.Component {
               </div>
               <div className="row">
                 <div className="text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
-                  <label htmlFor="file_picture">Upload Profile Picture</label>
+                  <label htmlFor="file_picture">Change Profile Picture</label>
                   <input
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="file_picture"
                     data-toggle="tooltip"
@@ -284,8 +318,9 @@ class File extends React.Component {
                   />
                 </div>
                 <div className="text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
-                  <label htmlFor="file_fingerprint">Upload Fingerprint</label>
+                  <label htmlFor="file_fingerprint">Change Fingerprint</label>
                   <input
+                    onChange={this.handleChange}
                     className="form-control my-2"
                     id="file_fingerprint"
                     placeholder="Date of Birth"
@@ -299,8 +334,11 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="eduction">Eduction</label>
                   <select
+                    value={this.state.file.education}
+                    onChange={this.handleChange}
                     id="education"
                     name="education"
                     className="form-control"
@@ -319,8 +357,11 @@ class File extends React.Component {
                   Place of Birth
                 </legend>
                 <div className="row">
-                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                    <label htmlFor="region_of_birth">Region of Birth</label>
                     <select
+                      value={this.state.file.region_of_birth}
+                      onChange={this.handleChange}
                       className="form-control"
                       id="region_of_birth"
                       name="region_of_birth"
@@ -331,8 +372,11 @@ class File extends React.Component {
                       })}
                     </select>
                   </div>
-                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                    <label htmlFor="district_of_birth">District of Birth</label>
                     <input
+                      value={this.state.file.district_of_birth}
+                      onChange={this.handleChange}
                       type="text"
                       className="form-control"
                       id="district_of_birth"
@@ -342,8 +386,11 @@ class File extends React.Component {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                    <label htmlFor="ward_of_birth">Ward of Birth</label>
                     <input
+                      value={this.state.file.ward_of_birth}
+                      onChange={this.handleChange}
                       type="text"
                       className="form-control"
                       id="ward_of_birth"
@@ -351,8 +398,11 @@ class File extends React.Component {
                       placeholder="Ward"
                     />
                   </div>
-                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                    <label htmlFor="Street_of_birth">Street of Birth</label>
                     <input
+                      value={this.state.file.street_of_birth}
+                      onChange={this.handleChange}
                       type="text"
                       className="form-control"
                       id="street_of_birth"
@@ -362,8 +412,11 @@ class File extends React.Component {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                    <label htmlFor="ethnicity">Ethnicity/Tribe</label>
                     <input
+                      value={this.state.file.ethnicity}
+                      onChange={this.handleChange}
                       type="text"
                       className="form-control"
                       id="ethnicity"
@@ -371,15 +424,20 @@ class File extends React.Component {
                       placeholder="Ethnicity/Tribe"
                     />
                   </div>
-                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2"></div>
+                  <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left "></div>
                 </div>
               </fieldset>
             </fieldset>
             <fieldset className="border p-2 my-5">
               <legend className="w-auto text-left ">Residential Address</legend>
               <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="region_of_residence">
+                    Region of Residence
+                  </label>
                   <select
+                    value={this.state.file.region_of_residence}
+                    onChange={this.handleChange}
                     className="form-control"
                     id="region_of_residence"
                     name="region_of_residence"
@@ -390,8 +448,13 @@ class File extends React.Component {
                     })}
                   </select>
                 </div>
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="district_of_residence">
+                    District of Residence
+                  </label>
                   <input
+                    value={this.state.file.district_of_residence}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                     id="district_of_residence"
@@ -401,8 +464,11 @@ class File extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="ward_of_residence">Ward of Residence</label>
                   <input
+                    value={this.state.file.ward_of_residence}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                     id="ward_of_residence"
@@ -410,8 +476,13 @@ class File extends React.Component {
                     placeholder="Ward"
                   />
                 </div>
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left ">
+                  <label htmlFor="street_of_residence">
+                    Street of Residence
+                  </label>
                   <input
+                    value={this.state.file.street_of_residence}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                     id="street_of_residence"
@@ -430,10 +501,10 @@ class File extends React.Component {
               ) : (
                 <input
                   type="submit"
-                  name="btnRegister"
-                  id="btnRegister"
+                  name="btnUpdateFile"
+                  id="btnUpdateFile"
                   className="btn btn-primary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
-                  value="PROCEED"
+                  value="UPDATE"
                 />
               )}
               <span className="col-md-4 col-lg-4 col-xl-4"></span>
@@ -453,4 +524,4 @@ class File extends React.Component {
   }
 }
 
-export default File;
+export default FileEdit;

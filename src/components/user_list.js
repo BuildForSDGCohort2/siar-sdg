@@ -83,8 +83,17 @@ class UserList extends React.Component {
               (this.state.hasFeedback ? "success" : "danger") +
               " py-2"
             }
+            role="alert"
           >
             {this.state.feedback}
+            <button
+              type="button"
+              className="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
         ) : null}
         {this.state.showForm ? (
