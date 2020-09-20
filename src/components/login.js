@@ -99,6 +99,9 @@ class LoginForm extends React.Component {
               />
             )}
           </form>
+          <a href="/report" className="btn btn-danger my-3">
+            Anonymous Crime Reporting
+          </a>
           <footer className="text-secondary text-small my-5">
             All Rights Reserved
           </footer>

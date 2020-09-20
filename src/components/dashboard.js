@@ -1,9 +1,10 @@
 import React from "react";
 import UserList from "./user_list";
-import avatar from "../images/avatar.jpg";
 import LoginForm from "./login";
 import config from "../config.json";
 import FileList from "./file_list";
+import ReportButton from "./report_button";
+import Reports from "./reports";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -188,6 +189,8 @@ class Dashboard extends React.Component {
               currentUser={this.state.currentUser}
               authenticated={this.state.authenticated}
             />
+          ) : this.state.clickTarget == "reports" ? (
+            <Reports currentUser={this.state.currentUser} />
           ) : null}
           <div
             className="modal fade"

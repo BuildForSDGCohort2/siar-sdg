@@ -1,8 +1,6 @@
 import React from "react";
 
-import logo from "../images/avatar.jpg";
 import config from "../config.json";
-import Dashboard from "./dashboard";
 import { Spinner } from "react-bootstrap";
 import { getCityNames } from "postcodes-tz";
 import OffenseForm from "./new_offense";
@@ -10,19 +8,7 @@ import OffenseForm from "./new_offense";
 class FileEdit extends React.Component {
   constructor(props) {
     super(props);
-    let offenses = [
-      { id: 0, name: "Armed Robbery" },
-      { id: 1, name: "Assault" },
-      { id: 2, name: "Domestic Violence" },
-      { id: 3, name: "Child Abuse" },
-      { id: 4, name: "Illegal Possession of Fire Arm" },
-      { id: 5, name: "Trespassing" },
-      { id: 6, name: "Fraud" },
-      { id: 7, name: "Economic Sabbotage" },
-      { id: 8, name: "Cyber Crime" },
-      { id: 9, name: "Murder" },
-    ];
-    // console.log("cities: ", getCityNames("asc"));
+
     this.state = {
       authenticated: true,
       currentUser: props.currentUser,
@@ -30,7 +16,6 @@ class FileEdit extends React.Component {
       isLoading: false,
       hasSuccessFeedback: false,
       hasFailFeedback: false,
-      feedback: null,
       file: props.file,
       next: false,
     };

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import config from "../config.json";
 
 const OffenseCard = (props) => {
   const [showDetail, setShowDetail] = useState(false);
