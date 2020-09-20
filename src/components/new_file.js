@@ -1,8 +1,6 @@
 import React from "react";
 
-import logo from "../images/avatar.jpg";
 import config from "../config.json";
-import Dashboard from "./dashboard";
 import { Spinner } from "react-bootstrap";
 import { getCityNames } from "postcodes-tz";
 import OffenseForm from "./new_offense";
@@ -30,7 +28,6 @@ class File extends React.Component {
       isLoading: false,
       hasSuccessFeedback: false,
       hasFailFeedback: false,
-      feedback: null,
       offenses: offenses,
       next: false,
     };

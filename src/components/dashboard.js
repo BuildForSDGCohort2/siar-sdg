@@ -1,22 +1,24 @@
 import React from "react";
 import UserList from "./user_list";
-import avatar from "../images/avatar.jpg";
 import LoginForm from "./login";
 import config from "../config.json";
 import FileList from "./file_list";
+import ReportButton from "./report_button";
+import Reports from "./reports";
+import Dialog from "./modal_dialog";
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      authenticated: props.authenticated,
-      currentUser: props.user,
-      isAdmin: true,
+      currentUser: props.currentUser,
+      isAdmin: false,
       users: [],
       files: [],
       clickTarget: "none",
       hasFeedback: false,
       feedback: null,
+      showDialog: false,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -24,6 +26,7 @@ class Dashboard extends React.Component {
     this.handleFormClose = this.handleFormClose.bind(this);
     this.updateUsers = this.updateUsers.bind(this);
     this.updateFiles = this.updateFiles.bind(this);
+    this.showDialog = this.showDialog.bind(this);
   }
   updateUsers(usersList) {
     this.setState({ users: usersList });
@@ -41,9 +44,13 @@ class Dashboard extends React.Component {
       console.log("result: ", this.state.clickTarget);
     });
   }
-  handleSignout(e) {
-    e.preventDefault();
-    this.setState({ authenticated: false });
+  handleSignout() {
+    // e.preventDefault();
+    this.setState({ currentUser: null });
+  }
+  showDialog() {
+    console.info("dialog");
+    this.setState({ showDialog: true });
   }
   getUsers() {
     fetch(config.api_url + "/data/?user=all", {
@@ -99,12 +106,8 @@ class Dashboard extends React.Component {
     this.getFiles();
   }
   render() {
-    if (
-      !this.state.authenticated ||
-      this.state.currentUser == undefined ||
-      this.state.currentUser == null
-    ) {
-      return <LoginForm />;
+    if (this.state.currentUser == undefined || this.state.currentUser == null) {
+      return <LoginForm target="dashboard" />;
     } else {
       return (
         <div>
@@ -114,8 +117,7 @@ class Dashboard extends React.Component {
             </span>
             <button
               className="btn btn-primary border-white text-white"
-              data-toggle="modal"
-              data-target="#signoutDialog"
+              onClick={this.showDialog}
             >
               Sign Out
             </button>
@@ -177,7 +179,6 @@ class Dashboard extends React.Component {
               onFormClose={() => this.handleFormClose()}
               users={this.state.users}
               currentUser={this.state.currentUser}
-              authenticated={this.state.authenticated}
             />
           ) : this.state.clickTarget == "files" ? (
             <FileList
@@ -186,54 +187,20 @@ class Dashboard extends React.Component {
               files={this.state.files}
               officers={this.state.users}
               currentUser={this.state.currentUser}
-              authenticated={this.state.authenticated}
+            />
+          ) : this.state.clickTarget == "reports" ? (
+            <Reports currentUser={this.state.currentUser} />
+          ) : null}
+          {this.state.showDialog ? (
+            <Dialog
+              show={this.state.showDialog}
+              title="Confirm Sign Out"
+              message="Are you sure you want to sign out?"
+              action="Sign Out"
+              onAction={this.handleSignout}
+              onClose={() => this.setState({ showDialog: false })}
             />
           ) : null}
-          <div
-            className="modal fade"
-            id="signoutDialog"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="signoutDialogLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="signoutDialogLabel">
-                    Confirm Signout
-                  </h5>
-                  <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div className="modal-body">
-                  Are you sure you want to sign out now?
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary mx-2"
-                    data-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={this.handleSignout}
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       );
     }

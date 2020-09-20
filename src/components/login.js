@@ -4,6 +4,7 @@ import logo from "../images/siar_logo.png";
 import config from "../config.json";
 import Dashboard from "./dashboard";
 import { Spinner } from "react-bootstrap";
+import Reports from "./reports";
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
@@ -51,14 +52,11 @@ class LoginForm extends React.Component {
       });
   }
   render() {
-    if (this.state.authenticated)
-      return (
-        <Dashboard
-          user={this.state.user}
-          authenticated={this.state.authenticated}
-        />
-      );
-    else {
+    if (this.state.user !== null && this.state.user !== undefined) {
+      if (this.props.target == "reports")
+        return <Reports currentUser={this.state.user} />;
+      else return <Dashboard currentUser={this.state.user} />;
+    } else {
       return (
         <div>
           <img src={logo} className="App-logo" alt="Siar logo" />
@@ -99,6 +97,9 @@ class LoginForm extends React.Component {
               />
             )}
           </form>
+          <a href="/report" className="btn btn-danger my-3">
+            Anonymous Crime Reporting
+          </a>
           <footer className="text-secondary text-small my-5">
             All Rights Reserved
           </footer>
