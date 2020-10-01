@@ -54,6 +54,7 @@ class OffenseEdit extends React.Component {
     if (el.id == "date_of_crime") val = el.value;
     if (el.id == "time_of_crime") val = el.value;
     if (el.id == "victims") val = el.value;
+    if (el.id == "status") val = el.options[el.options.selectedIndex].value;
     if (el.id == "case_officer")
       val = el.options[el.options.selectedIndex].value;
 
@@ -69,8 +70,8 @@ class OffenseEdit extends React.Component {
     this.setState({ isLoading: true });
     let body = this.state.offense;
     body.officer_id = this.state.currentUser.id;
-    delete body.attending_officer;
-    delete body.case_officer_detail;
+    // delete body.attending_officer;
+    // delete body.case_officer_detail;
     body.btnUpdateOffense = "submit";
 
     console.log("body: ", body);
@@ -149,6 +150,36 @@ class OffenseEdit extends React.Component {
                     );
                   })}
                 </select>
+              </div>
+              <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left">
+                <label htmlFor="status">Case Status</label>
+                <select
+                  id="status"
+                  name="status"
+                  className="form-control"
+                  value={this.state.offense.status}
+                  onChange={this.handleChange}
+                >
+                  <option value="none">--Select Case Status--</option>
+                  <option>Open</option>
+                  <option>Investigation</option>
+                  <option>Prosecution</option>
+                  <option>Closed</option>
+                </select>
+              </div>
+            </div>
+            <div className="row">
+              <div className="text-left col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
+                <label htmlFor="victims">Victims</label>
+                <input
+                  value={this.state.offense.victims}
+                  onChange={this.handleChange}
+                  type="text"
+                  className="form-control"
+                  id="victims"
+                  name="victims"
+                  placeholder="Victims of crime"
+                />
               </div>
               <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2 text-left">
                 <label htmlFor="offense">Offense</label>
@@ -236,17 +267,6 @@ class OffenseEdit extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12col-sm-12 col-xs-12 py-2">
-                  <input
-                    value={this.state.offense.victims}
-                    onChange={this.handleChange}
-                    type="text"
-                    className="form-control"
-                    id="victims"
-                    name="victims"
-                    placeholder="Victims of crime"
-                  />
-                </div>
                 <div className="col"></div>
               </div>
               <div className="row">

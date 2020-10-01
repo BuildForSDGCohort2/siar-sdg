@@ -5,6 +5,7 @@ import config from "../config.json";
 import FileList from "./file_list";
 import ReportButton from "./report_button";
 import ReportList from "./report_list";
+import CategoryReport from "./category_report";
 
 class Reports extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class Reports extends React.Component {
       currentUser: props.currentUser,
       isAdmin: false,
       anonymousReport: [],
+      files: [],
       clickTarget: "none",
       hasFeedback: false,
       feedback: null,
@@ -78,14 +80,15 @@ class Reports extends React.Component {
       });
   }
   getFiles() {
-    fetch(config.api_url + "/data/?files=all", {
+    fetch(config.api_url + "/data/?offenses=all", {
       method: "get",
       headers: { "content-type": "application/json" },
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log("files: ", result.files);
-        this.setState({ files: result.files });
+        console.log("files: ", result.data);
+
+        this.setState({ files: result.data });
       })
       .catch((e) => {
         console.log("error: ", e);
@@ -110,7 +113,7 @@ class Reports extends React.Component {
     console.log("usr: ", this.state.currentUser);
     this.getAnonymousReports();
     // this.getUsers();
-    // this.getFiles();
+    this.getFiles();
   }
   render() {
     if (
@@ -123,6 +126,14 @@ class Reports extends React.Component {
         return (
           <ReportList
             data={this.state.anonymousReport}
+            currentUser={this.state.currentUser}
+            onClose={this.handleFormClose}
+          />
+        );
+      } else if (this.state.clickTarget === "category") {
+        return (
+          <CategoryReport
+            data={this.state.files}
             currentUser={this.state.currentUser}
             onClose={this.handleFormClose}
           />
@@ -148,7 +159,12 @@ class Reports extends React.Component {
               text="Summary of crimes anonymously reported"
               icon="assignment"
             />
-            <ReportButton text="Report of Crimes by Category" icon="grading" />
+            <ReportButton
+              id="category"
+              text="Report of Crimes by Category"
+              icon="grading"
+              onClick={(id) => this.handleClick(id)}
+            />
             <ReportButton
               text="Files pending prosecution"
               icon="pending_actions"

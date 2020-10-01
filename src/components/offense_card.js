@@ -49,6 +49,8 @@ const OffenseCard = (props) => {
               </p>
               <span>Victims</span>
               <p>{props.data.victims}</p>
+              <span>Case Status</span>
+              <p>{props.data.status}</p>
             </div>
           </>
         ) : null}

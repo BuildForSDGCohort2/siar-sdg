@@ -33,16 +33,31 @@ const ReportList = (props) => {
           onChange={handleSearch}
         />
       </div>
-      <div className="row col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5">
-        {filteredList.length > 0 ? (
-          filteredList.map((u) => {
-            return <ReportItem data={u} key={u.id} />;
-          })
-        ) : (
-          <span className="col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5 text-center">
-            No Records Matched
-          </span>
-        )}
+      <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5 d-flex justify-content-between table-responsive">
+        <table className="table">
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Offense</th>
+              <th scope="col">Victim</th>
+              <th scope="col">Date of Crime</th>
+              <th scope="col">Date Reported</th>
+              <th scope="col">Crime Area</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredList.length > 0 ? (
+              filteredList.map((u, i) => {
+                return <ReportItem data={u} key={u.id} position={i} />;
+              })
+            ) : (
+              <span className="col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5 text-center">
+                No Records Matched
+              </span>
+            )}
+          </tbody>
+        </table>
       </div>
     </>
   );
