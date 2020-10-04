@@ -238,6 +238,7 @@ class FileEdit extends React.Component {
                     name="gender"
                     type="text"
                     required
+                    value={this.state.file.gender}
                   >
                     <option>--Select Gender--</option>
                     <option>Female</option>

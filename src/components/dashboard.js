@@ -19,6 +19,7 @@ class Dashboard extends React.Component {
       hasFeedback: false,
       feedback: null,
       showDialog: false,
+      isHome: true,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -27,6 +28,11 @@ class Dashboard extends React.Component {
     this.updateUsers = this.updateUsers.bind(this);
     this.updateFiles = this.updateFiles.bind(this);
     this.showDialog = this.showDialog.bind(this);
+    this.handleHomeClick = this.handleHomeClick.bind(this);
+  }
+  handleHomeClick() {
+    this.handleFormClose();
+    this.setState({ isHome: true });
   }
   updateUsers(usersList) {
     this.setState({ users: usersList });
@@ -40,7 +46,7 @@ class Dashboard extends React.Component {
   handleClick(e) {
     console.log("test: ", e.target.id);
     let id = e.target.id;
-    this.setState({ clickTarget: id }, () => {
+    this.setState({ clickTarget: id, isHome: false }, () => {
       console.log("result: ", this.state.clickTarget);
     });
   }
@@ -112,9 +118,11 @@ class Dashboard extends React.Component {
       return (
         <div>
           <div className="d-flex justify-content-between bg-primary text-white py-4 px-4">
-            <span className="text-white px-5">
-              {/* {this.props.user.username} */}
-            </span>
+            {!this.state.isHome ? (
+              <span className="text-white px-5" onClick={this.handleHomeClick}>
+                <i className="material-icons btn text-white display-4">home</i>
+              </span>
+            ) : null}
             <button
               className="btn btn-primary border-white text-white"
               onClick={this.showDialog}
