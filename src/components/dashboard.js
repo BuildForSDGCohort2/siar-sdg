@@ -31,7 +31,6 @@ class Dashboard extends React.Component {
     this.handleHomeClick = this.handleHomeClick.bind(this);
   }
   handleHomeClick() {
-    console.log("ok..");
     this.handleFormClose();
     this.setState({ isHome: true });
   }

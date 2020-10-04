@@ -101,7 +101,7 @@ class OffenseEdit extends React.Component {
         } else {
           this.setState({ hasSuccessFeedback: false, feedback: response.msg });
         }
-        // this.props.onFeedback(feedback, this.state.hasSuccessFeedback);
+        this.props.onFeedback(feedback, this.state.hasSuccessFeedback);
       })
       .catch((error) => {
         console.error("error: ", error);
