@@ -2,6 +2,7 @@ import React from "react";
 import UserItem from "./user_item";
 import UserForm from "./user_form";
 import UserDetail from "./user_detail";
+import config from "../config.json";
 
 class UserList extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class UserList extends React.Component {
       feedback: null,
       closeMe: false,
       selectedUser: null,
+      ranks: [],
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -25,6 +27,7 @@ class UserList extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.updateUsers = this.updateUsers.bind(this);
     this.handleCloseDetail = this.handleCloseDetail.bind(this);
+    this.getRanks = this.getRanks.bind(this);
   }
   updateUsers(list) {
     this.setState({ filteredUsers: list }, () => {
@@ -70,7 +73,35 @@ class UserList extends React.Component {
     e.preventDefault();
     this.setState({ authenticated: false });
   }
+  getRanks() {
+    fetch(config.api_url + "/data/?ranks=all", {
+      method: "get",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        let feedback = response.msg;
+        if (response.success == 1) {
+          this.setState({ hasFeedback: false, feedback: feedback }, () => {
+            this.props.onFeedback(feedback, this.state.hasFeedback);
+          });
+        } else {
+          this.setState({ ranks: response.ranks });
+        }
+      })
+      .catch((error) => {
+        console.error("error: ", error);
+        this.setState({
+          hasFailFeedback: true,
+          isLoading: false,
+          feedback: "An error occurred!",
+        });
+      });
+  }
   componentDidMount() {
+    this.getRanks();
     this.setState({ selectedUser: null, filteredUsers: this.state.users });
   }
   render() {
@@ -98,6 +129,7 @@ class UserList extends React.Component {
         ) : null}
         {this.state.showForm ? (
           <UserForm
+            ranks={this.state.ranks}
             onFeedback={(msg, success) => this.handleFeedback(msg, success)}
             onUpdate={(list) => this.updateUsers(list)}
             currentUser={this.state.currentUser}
@@ -110,7 +142,7 @@ class UserList extends React.Component {
                 className="btn btn-success col-sm-4 col-xs-4 col-md-2 col-lg-2 col-xl-2"
                 onClick={this.handleNewUser}
               >
-                Add User
+                New Officer
               </button>
               <i
                 className="material-icons btn btn-danger  col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1"
@@ -151,6 +183,7 @@ class UserList extends React.Component {
           </>
         ) : (
           <UserDetail
+            ranks={this.state.ranks}
             onFeedback={(msg, success) => this.handleFeedback(msg, success)}
             user={this.state.selectedUser}
             onClose={this.handleCloseDetail}

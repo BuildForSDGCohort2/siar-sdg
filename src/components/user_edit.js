@@ -12,10 +12,10 @@ class UserEdit extends React.Component {
       currentUser: props.currentUser,
       feedback: null,
       isLoading: false,
-      hasSuccessFeedback: false,
-      hasFailFeedback: false,
+      hasFeedback: false,
       feedback: null,
       user: props.user,
+      ranks: props.ranks,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -30,6 +30,16 @@ class UserEdit extends React.Component {
     let value = target.value;
     let user = this.state.user;
     switch (target.id.toLowerCase()) {
+      case "ranking":
+        user.ranking = target.options[target.options.selectedIndex].value;
+        user.rank = this.state.ranks.filter((r) => {
+          return (r.id = user.ranking);
+        })[0];
+
+        break;
+      case "station":
+        user.station = value;
+        break;
       case "username":
         user.username = value;
         break;
@@ -57,12 +67,14 @@ class UserEdit extends React.Component {
     event.preventDefault();
     this.setState({ isLoading: true });
     let username = document.getElementById("username").value;
-    // let password = document.getElementById("password").value;
+    let el = document.getElementById("ranking");
+    let ranking = el.options[el.options.selectedIndex].value;
     let first_name = document.getElementById("first_name").value;
     let middle_name = document.getElementById("middle_name").value;
     let last_name = document.getElementById("last_name").value;
     let phone = document.getElementById("phone").value;
     let email = document.getElementById("email").value;
+    let station = document.getElementById("station").value;
     // let password = document.getElementById("password").value;
     let body = {
       id: this.props.user.id,
@@ -73,6 +85,8 @@ class UserEdit extends React.Component {
       last_name: last_name,
       phone: phone,
       email: email,
+      ranking: ranking,
+      station: station,
       btnUpdateUser: "update",
     };
     console.log("body: ", body);
@@ -177,6 +191,39 @@ class UserEdit extends React.Component {
                 name="email"
                 defaultValue={this.state.user.email}
                 onChange={this.handleChange}
+              />
+
+              <label htmlFor="ranking">Select Officer Rank</label>
+              <select
+                className="form-control my-2"
+                id="ranking"
+                name="ranking"
+                value={this.state.user.ranking}
+                onChange={this.handleChange}
+                required
+              >
+                {this.state.ranks.length > 0 ? (
+                  this.state.ranks.map((r) => {
+                    return (
+                      <option key={r.id} value={r.id}>
+                        {r.description}
+                      </option>
+                    );
+                  })
+                ) : (
+                  <option value="no ranks">Ranks not available</option>
+                )}
+              </select>
+              <label htmlFor="station">Duty Station</label>
+              <input
+                className="form-control my-2"
+                id="station"
+                placeholder="Duty Station"
+                name="station"
+                type="text"
+                value={this.state.user.station}
+                onChange={this.handleChange}
+                required
               />
               <label htmlFor="username">Officer ID</label>
               <input

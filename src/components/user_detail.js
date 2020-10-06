@@ -32,6 +32,7 @@ class UserDetail extends React.Component {
     if (this.state.showEdit) {
       return (
         <UserEdit
+          ranks={this.props.ranks}
           user={this.props.user}
           onClose={this.props.onClose}
           onUpdate={(u) => this.props.onUpdate(u)}
@@ -116,6 +117,22 @@ class UserDetail extends React.Component {
                 name="username"
               >
                 {this.props.user.username}
+              </span>
+              <label htmlFor="station">Duty Station</label>
+              <span
+                className="text-primary my-2 form-control"
+                id="station"
+                name="station"
+              >
+                {this.props.user.station}
+              </span>
+              <label htmlFor="ranking">Officer Rank</label>
+              <span
+                className="text-primary my-2 form-control"
+                id="ranking"
+                name="ranking"
+              >
+                {this.props.user.rank.description}
               </span>
             </div>
           </div>

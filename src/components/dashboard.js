@@ -6,6 +6,7 @@ import FileList from "./file_list";
 import ReportButton from "./report_button";
 import Reports from "./reports";
 import Dialog from "./modal_dialog";
+import Settings from "./settings";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -117,12 +118,14 @@ class Dashboard extends React.Component {
     } else {
       return (
         <div>
-          <div className="d-flex align-items-center justify-content-between bg-primary text-white py-2 px-4">
+          <div className="d-flex align-items-center justify-content-between bg-primary text-white py-3 px-4">
             {!this.state.isHome ? (
               <span className="text-white px-5" onClick={this.handleHomeClick}>
                 <i className="material-icons text-white display-4">dashboard</i>
               </span>
-            ) : null}
+            ) : (
+              <span></span>
+            )}
             <span
               className="btn border-white text-white"
               onClick={this.showDialog}
@@ -140,10 +143,10 @@ class Dashboard extends React.Component {
                     onClick={(event) => this.handleClick(event)}
                   >
                     <i id="users" className="material-icons display-4">
-                      people
+                      local_police
                     </i>
                     <br />
-                    <span className="dispaly-4 my-2">Users</span>
+                    <span className="dispaly-4 my-2">Officers</span>
                   </div>
                 ) : null}
                 <div
@@ -198,7 +201,9 @@ class Dashboard extends React.Component {
             />
           ) : this.state.clickTarget == "reports" ? (
             <Reports currentUser={this.state.currentUser} />
-          ) : null}
+          ) : (
+            <Settings currentUser={this.state.currentUser} />
+          )}
           {this.state.showDialog ? (
             <Dialog
               show={this.state.showDialog}
