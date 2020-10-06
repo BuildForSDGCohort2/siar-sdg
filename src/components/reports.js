@@ -6,6 +6,7 @@ import FileList from "./file_list";
 import ReportButton from "./report_button";
 import ReportList from "./report_list";
 import CategoryReport from "./category_report";
+import FileReportList from "./files_report_list";
 
 class Reports extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ class Reports extends React.Component {
       clickTarget: "none",
       hasFeedback: false,
       feedback: null,
+      dppFiles: [],
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -26,6 +28,15 @@ class Reports extends React.Component {
     this.updateUsers = this.updateUsers.bind(this);
     this.updateFiles = this.updateFiles.bind(this);
     this.getAnonymousReports = this.getAnonymousReports.bind(this);
+    this.getFilesForDpp = this.getFilesForDpp.bind(this);
+  }
+  getFilesForDpp() {
+    console.info("dpp files: ", this.state.files);
+    let dppFiles = this.state.files.filter((file) => {
+      return file.status.toLowerCase() == "prosecution";
+    });
+    console.info("dpp: ", dppFiles);
+    this.setState({ dppFiles: dppFiles });
   }
   updateUsers(usersList) {
     this.setState({ users: usersList });
@@ -37,6 +48,7 @@ class Reports extends React.Component {
     this.setState({ clickTarget: "none" });
   }
   handleClick(id) {
+    if (id === "dpp") this.getFilesForDpp();
     this.setState({ clickTarget: id });
 
     // this.setState({ showReport: true });
@@ -138,6 +150,14 @@ class Reports extends React.Component {
             onClose={this.handleFormClose}
           />
         );
+      } else if (this.state.clickTarget === "dpp") {
+        return (
+          <FileReportList
+            data={this.state.dppFiles}
+            currentUser={this.state.currentUser}
+            onClose={this.handleFormClose}
+          />
+        );
       }
       return (
         <>
@@ -166,8 +186,10 @@ class Reports extends React.Component {
               onClick={(id) => this.handleClick(id)}
             />
             <ReportButton
-              text="Files pending prosecution"
-              icon="pending_actions"
+              id="dpp"
+              text="Files Sent to DPP"
+              icon="exit_to_app"
+              onClick={(id) => this.handleClick(id)}
             />
           </div>
 

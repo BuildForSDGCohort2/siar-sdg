@@ -70,11 +70,8 @@ class OffenseEdit extends React.Component {
     this.setState({ isLoading: true });
     let body = this.state.offense;
     body.officer_id = this.state.currentUser.id;
-    // delete body.attending_officer;
-    // delete body.case_officer_detail;
     body.btnUpdateOffense = "submit";
 
-    console.log("body: ", body);
     this.updateOffense(body);
   }
   text2Date(event) {

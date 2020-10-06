@@ -5,11 +5,10 @@ const ReportItem = (props) => {
   return (
     <tr>
       <th scope="row">{props.position + 1}</th>
-      <td>{d.offense}</td>
-      <td>{d.victim}</td>
-      <td>{d.date_of_crime}</td>
-      <td>{d.date_created}</td>
-      <td>
+      <td className="text-left">{d.offense}</td>
+      <td className="text-right">{d.date_of_crime}</td>
+      <td className="text-right">{d.date_created}</td>
+      <td className="text-left">
         {d.street_of_crime +
           " Street, " +
           d.ward_of_crime +
@@ -19,7 +18,7 @@ const ReportItem = (props) => {
           d.region_of_crime +
           ")"}
       </td>
-      <td>{d.status}</td>
+      <td className="text-left">{d.status}</td>
     </tr>
   );
 };

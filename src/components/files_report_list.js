@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import ReportItem from "./report_list_item";
+import FileReportItem from "./file_report_item";
 
-const ReportList = (props) => {
+const FileReportList = (props) => {
   const [filteredList, setFilteredList] = useState(props.data);
   const [list, setList] = useState(props.data);
   const handleSearch = (e) => {
@@ -15,7 +15,10 @@ const ReportList = (props) => {
           item.status.toLowerCase().includes(search) ||
           item.region_of_crime.toLowerCase().includes(search) ||
           item.district_of_crime.toLowerCase().includes(search) ||
-          item.street_of_crime.toLowerCase().includes(search)
+          item.street_of_crime.toLowerCase().includes(search) ||
+          item.offender.first_name.toLowerCase().includes(search) ||
+          item.offender.last_name.toLowerCase().includes(search) ||
+          item.case_officer_detail.username.toLowerCase().includes(search)
         );
       });
       setFilteredList(result);
@@ -26,7 +29,18 @@ const ReportList = (props) => {
   };
   return (
     <>
+      <h2>Files Sent For Prosecution</h2>
       <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5 d-flex justify-content-between">
+        <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2">
+          <input
+            type="text"
+            className="form-control col-md-8 col-lg-8 col-xl-8  offset-md-2 offset-lg-2 offset-xl-2"
+            id="search"
+            name="search"
+            placeholder="search"
+            onChange={handleSearch}
+          />
+        </div>
         <i
           className="material-icons btn btn-danger  col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1"
           onClick={handleClose}
@@ -34,32 +48,35 @@ const ReportList = (props) => {
           close
         </i>
       </div>
-      <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
-        <input
-          type="text"
-          className="form-control col-md-8 col-lg-8 col-xl-8  offset-md-2 offset-lg-2 offset-xl-2 my-5"
-          id="search"
-          name="search"
-          placeholder="search"
-          onChange={handleSearch}
-        />
-      </div>
+
       <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5 d-flex justify-content-between table-responsive">
         <table className="table">
           <thead className="thead-dark">
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Offense</th>
-              <th scope="col">Date of Crime</th>
-              <th scope="col">Date Reported</th>
-              <th scope="col">Crime Area</th>
-              <th scope="col">Status</th>
+              <th scope="col" className="text-right">
+                #
+              </th>
+              <th scope="col" className="text-left">
+                Offender
+              </th>
+              <th scope="col" className="text-left">
+                Charges
+              </th>
+              <th scope="col" className="text-left">
+                Last Updated
+              </th>
+              <th scope="col" className="text-left">
+                Case Officer
+              </th>
+              <th scope="col" className="text-left">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredList.length > 0 ? (
               filteredList.map((u, i) => {
-                return <ReportItem data={u} key={u.id} position={i} />;
+                return <FileReportItem data={u} key={u.id} position={i} />;
               })
             ) : (
               <tr>
@@ -74,4 +91,4 @@ const ReportList = (props) => {
     </>
   );
 };
-export default ReportList;
+export default FileReportList;
