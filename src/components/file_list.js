@@ -29,6 +29,7 @@ class FileList extends React.Component {
   updateFiles(list) {
     this.setState({ files: list, filteredFiles: list }, () => {
       this.props.onUpdate(this.state.files);
+      console.info("update in file_list: ", list);
     });
   }
   handleClick(id) {

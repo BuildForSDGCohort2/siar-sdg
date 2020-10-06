@@ -38,24 +38,22 @@ class Dashboard extends React.Component {
     this.setState({ users: usersList });
   }
   updateFiles(files) {
-    this.setState({ files: files });
+    this.setState({ files: files }, () => {
+      console.info("update in dashboard: ", files);
+    });
   }
   handleFormClose() {
     this.setState({ clickTarget: "none" });
   }
   handleClick(e) {
-    console.log("test: ", e.target.id);
     let id = e.target.id;
-    this.setState({ clickTarget: id, isHome: false }, () => {
-      console.log("result: ", this.state.clickTarget);
-    });
+    this.setState({ clickTarget: id, isHome: false });
   }
   handleSignout() {
     // e.preventDefault();
     this.setState({ currentUser: null });
   }
   showDialog() {
-    console.info("dialog");
     this.setState({ showDialog: true });
   }
   getUsers() {
@@ -108,8 +106,10 @@ class Dashboard extends React.Component {
   }
   componentDidMount() {
     console.log("usr: ", this.state.currentUser);
-    this.getUsers();
-    this.getFiles();
+    if (this.state.currentUser) {
+      this.getUsers();
+      this.getFiles();
+    }
   }
   render() {
     if (this.state.currentUser == undefined || this.state.currentUser == null) {
@@ -117,18 +117,18 @@ class Dashboard extends React.Component {
     } else {
       return (
         <div>
-          <div className="d-flex justify-content-between bg-primary text-white py-4 px-4">
+          <div className="d-flex align-items-center justify-content-between bg-primary text-white py-2 px-4">
             {!this.state.isHome ? (
               <span className="text-white px-5" onClick={this.handleHomeClick}>
-                <i className="material-icons btn text-white display-4">home</i>
+                <i className="material-icons text-white display-4">dashboard</i>
               </span>
             ) : null}
-            <button
-              className="btn btn-primary border-white text-white"
+            <span
+              className="btn border-white text-white"
               onClick={this.showDialog}
             >
               Sign Out
-            </button>
+            </span>
           </div>
           {this.state.clickTarget == "none" ? (
             <>

@@ -75,6 +75,9 @@ class CategoryReport extends React.Component {
       <>
         <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-3 d-flex justify-content-between">
           <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2">
+            <label htmlFor="filter" className="text-secondary">
+              Select Report Factor
+            </label>
             <select
               className="form-control col-md-8 col-lg-8 col-xl-8  offset-md-2 offset-lg-2 offset-xl-2"
               id="filter"
@@ -82,7 +85,6 @@ class CategoryReport extends React.Component {
               onChange={this.handleFilter}
               value={this.state.filter}
             >
-              <option value="none">--Select Filter--</option>
               <option value="offense">Offense</option>
               <option value="region_of_crime">Region</option>
               <option value="status">Case Status</option>
@@ -90,7 +92,7 @@ class CategoryReport extends React.Component {
             </select>
           </div>
           <i
-            className="material-icons btn btn-danger  col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1"
+            className="material-icons btn text-dark col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1"
             onClick={this.handleClose}
           >
             close

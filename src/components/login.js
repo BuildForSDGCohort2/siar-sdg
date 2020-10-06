@@ -60,7 +60,9 @@ class LoginForm extends React.Component {
       return (
         <div>
           <img src={logo} className="App-logo" alt="Siar logo" />
-          <p></p>
+          <p>
+            (Demo user: <b>admin</b> &nbsp;Password:<b>NoPassword1</b>)
+          </p>
           <form
             className="col-sm-8 col-xs-8 offset-sm-2 offset-xs-2 col-md-4 col-lg-4 col-xl-4 offset-md-4 offset-lg-4 offset-xl-4"
             onSubmit={this.handleSubmit}
