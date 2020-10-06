@@ -16,6 +16,7 @@ class UserForm extends React.Component {
       hasSuccessFeedback: false,
       hasFailFeedback: false,
       feedback: null,
+      ranks: props.ranks,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -48,6 +49,7 @@ class UserForm extends React.Component {
     console.log("body: ", body);
     this.signup(body);
   }
+
   signup(user) {
     fetch(config.api_url + "/auth/", {
       method: "post",
@@ -79,6 +81,7 @@ class UserForm extends React.Component {
         });
       });
   }
+
   render() {
     return (
       <div className="my-2 col-md-8 col-lg-8 col-xl-8 col-sm-10 col-sx-10 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1">
@@ -149,6 +152,35 @@ class UserForm extends React.Component {
             type="text"
             required
           />
+          <div className="text-left">
+            <label htmlFor="ranking">Select Officer Rank</label>
+            <select
+              className="form-control my-2"
+              id="ranking"
+              name="ranking"
+              required
+            >
+              {this.state.ranks.length > 0 ? (
+                this.state.ranks.map((r) => {
+                  return (
+                    <option key={r.id} value={r.id}>
+                      {r.description}
+                    </option>
+                  );
+                })
+              ) : (
+                <option value="no ranks">Ranks not available</option>
+              )}
+            </select>
+          </div>
+          <input
+            className="form-control my-2"
+            id="station"
+            placeholder="Duty Station"
+            name="station"
+            type="text"
+            required
+          />
           <input
             className="form-control my-2"
             id="password"
@@ -167,7 +199,7 @@ class UserForm extends React.Component {
                 name="btnRegister"
                 id="btnRegister"
                 className="btn btn-primary btn my-2 mx-2 col-md-3 col-lg-3 col-xl-3"
-                value="ADD USER"
+                value="ADD OFFICER"
               />
             )}
             <span className="col-md-4 col-lg-4 col-xl-4"></span>
