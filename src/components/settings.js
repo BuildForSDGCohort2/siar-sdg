@@ -1,25 +1,25 @@
 import React from "react";
-import UserList from "./user_list";
 import LoginForm from "./login";
 import config from "../config.json";
-import FileList from "./file_list";
 import ReportButton from "./report_button";
 import ReportList from "./report_list";
 import CategoryReport from "./category_report";
 import FileReportList from "./files_report_list";
+import PasswordSetting from "./password_setting";
 
 class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       currentUser: props.currentUser,
-      isAdmin: false,
+      isAdmin: props.currentUser.username === "admin",
       anonymousReport: [],
       files: [],
       clickTarget: "none",
       hasFeedback: false,
       feedback: null,
       dppFiles: [],
+      users: [],
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -33,7 +33,7 @@ class Settings extends React.Component {
   getFilesForDpp() {
     console.info("dpp files: ", this.state.files);
     let dppFiles = this.state.files.filter((file) => {
-      return file.status.toLowerCase() == "prosecution";
+      return file.status.toLowerCase() === "prosecution";
     });
     console.info("dpp: ", dppFiles);
     this.setState({ dppFiles: dppFiles });
@@ -50,8 +50,6 @@ class Settings extends React.Component {
   handleClick(id) {
     if (id === "dpp") this.getFilesForDpp();
     this.setState({ clickTarget: id });
-
-    // this.setState({ showReport: true });
   }
   handleSignout(e) {
     e.preventDefault();
@@ -66,24 +64,11 @@ class Settings extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log("users: ", response);
-        if (response.success == 0) {
+        if (response.success === 0) {
           let users = response.users;
-          let isAdmin = false;
-          if (
-            this.state.currentUser != null ||
-            this.state.currentUser != undefined
-          ) {
-            if (this.state.currentUser.username === "admin") isAdmin = true;
-          }
-          if (users.length > 0) {
-            users = users.filter((u) => {
-              return u.username != "admin";
-            });
-          }
+
           this.setState({
             users: users,
-            isAdmin: isAdmin,
           });
         }
       })
@@ -124,7 +109,7 @@ class Settings extends React.Component {
   componentDidMount() {
     console.log("usr: ", this.state.currentUser);
     this.getAnonymousReports();
-    // this.getUsers();
+    this.getUsers();
     this.getFiles();
   }
   render() {
@@ -132,12 +117,13 @@ class Settings extends React.Component {
       this.state.currentUser === null ||
       this.state.currentUser === undefined
     ) {
-      return <LoginForm target="reports" />;
+      return <LoginForm target="settings" />;
     } else {
-      if (this.state.clickTarget === "anonymous") {
+      if (this.state.clickTarget === "password") {
         return (
-          <ReportList
-            data={this.state.anonymousReport}
+          <PasswordSetting
+            users={this.state.users}
+            isAdmin={this.state.isAdmin}
             currentUser={this.state.currentUser}
             onClose={this.handleFormClose}
           />
@@ -174,19 +160,19 @@ class Settings extends React.Component {
           ) : null}
           <div className="row col-md-8 col-lg-8 col-xl-8 col-sm-10 col-xs-10 offset-sm-1 offset-xs-1 offset-md-2 offset-lg-2 offset-xl-2 my-5 d-flex  justify-content-between">
             <ReportButton
-              id="anonymous"
+              id="password"
               onClick={(id) => this.handleClick(id)}
-              text="Manage your account details"
+              text="Change your login password"
               icon="lock"
             />
             <ReportButton
-              id="category"
+              id="stations"
               text="Manage Police Stations"
               icon="apartment"
               onClick={(id) => this.handleClick(id)}
             />
             <ReportButton
-              id="dpp"
+              id="ranks"
               text="Manage Officer Ranks"
               icon="stars"
               onClick={(id) => this.handleClick(id)}

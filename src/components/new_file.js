@@ -127,7 +127,7 @@ class File extends React.Component {
         this.setState({ isLoading: false });
         console.log("response: ", response);
         let feedback = response.msg;
-        if (response.success == 0) {
+        if (response.success === 0) {
           this.setState({ hasSuccessFeedback: true, feedback: feedback });
           this.props.onUpdate(response.files);
           this.handleCancel();
