@@ -1,8 +1,6 @@
 import React from "react";
-import UserList from "./user_list";
 import LoginForm from "./login";
 import config from "../config.json";
-import FileList from "./file_list";
 import ReportButton from "./report_button";
 import ReportList from "./report_list";
 import CategoryReport from "./category_report";
@@ -33,7 +31,7 @@ class Reports extends React.Component {
   getFilesForDpp() {
     console.info("dpp files: ", this.state.files);
     let dppFiles = this.state.files.filter((file) => {
-      return file.status.toLowerCase() == "prosecution";
+      return file.status.toLowerCase() === "prosecution";
     });
     console.info("dpp: ", dppFiles);
     this.setState({ dppFiles: dppFiles });
@@ -50,8 +48,6 @@ class Reports extends React.Component {
   handleClick(id) {
     if (id === "dpp") this.getFilesForDpp();
     this.setState({ clickTarget: id });
-
-    // this.setState({ showReport: true });
   }
   handleSignout(e) {
     e.preventDefault();
@@ -66,19 +62,18 @@ class Reports extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log("users: ", response);
-        if (response.success == 0) {
+        if (response.success === 0) {
           let users = response.users;
           let isAdmin = false;
           if (
-            this.state.currentUser != null ||
-            this.state.currentUser != undefined
+            this.state.currentUser !== null ||
+            this.state.currentUser !== undefined
           ) {
             if (this.state.currentUser.username === "admin") isAdmin = true;
           }
           if (users.length > 0) {
             users = users.filter((u) => {
-              return u.username != "admin";
+              return u.username !== "admin";
             });
           }
           this.setState({

@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
-import ReportItem from "./report_list_item";
 import {
   VictoryBar,
   VictoryChart,
   VictoryAxis,
   VictoryTheme,
-  VictoryPie,
-  VictoryLine,
   VictoryLabel,
-  VictoryGroup,
-  VictoryLegend,
-  Border,
 } from "victory";
-import { render } from "@testing-library/react";
+
 class CategoryReport extends React.Component {
   constructor(props) {
     super(props);
