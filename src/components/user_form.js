@@ -1,6 +1,6 @@
 import React from "react";
 
-import logo from "../images/avatar.jpg";
+import avatar from "../images/avatar.jpg";
 import config from "../config.json";
 import Dashboard from "./dashboard";
 import { Spinner } from "react-bootstrap";
@@ -17,10 +17,35 @@ class UserForm extends React.Component {
       hasFailFeedback: false,
       feedback: null,
       ranks: props.ranks,
+      avatar: avatar,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.signup = this.signup.bind(this);
+    this.previewImage = this.previewImage.bind(this);
+    this.readBase64 = this.readBase64.bind(this);
+  }
+  previewImage(e) {
+    let target = e.target;
+    let preview = document.getElementById("avatar");
+    if (target.files && target.files.length > 0) {
+      this.readBase64(target.files[0])
+        .then((result) => {
+          preview.src = result;
+          this.setState({ avatar: result });
+        })
+        .catch((e) => {
+          console.error("error uploading file: ", e);
+        });
+    }
+  }
+  readBase64(file) {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onError = (e) => reject(e);
+    });
   }
   handleCancel() {
     this.props.onCancelForm(true);
@@ -35,7 +60,9 @@ class UserForm extends React.Component {
     let last_name = document.getElementById("last_name").value;
     let phone = document.getElementById("phone").value;
     let email = document.getElementById("email").value;
-    // let password = document.getElementById("password").value;
+    let el = document.getElementById("ranking");
+    let ranking = el.options[el.options.selectedIndex].value;
+    let station = document.getElementById("station").value;
     let body = {
       username: username,
       password: password,
@@ -44,6 +71,9 @@ class UserForm extends React.Component {
       last_name: last_name,
       phone: phone,
       email: email,
+      station: station,
+      ranking: ranking,
+      avatar: this.state.avatar,
       btnRegister: "register",
     };
     console.log("body: ", body);
@@ -86,9 +116,10 @@ class UserForm extends React.Component {
     return (
       <div className="my-2 col-md-8 col-lg-8 col-xl-8 col-sm-10 col-sx-10 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1">
         <img
-          src={logo}
+          src={avatar}
           className="avatar border rounded-circle"
-          alt="user avatar"
+          alt="Officer Picture"
+          id="avatar"
         />
         {this.state.feedback !== null ? (
           <div
@@ -105,6 +136,14 @@ class UserForm extends React.Component {
           className="col-md-8 col-lg-8 col-xl-8 col-sm-10 col-sx-10 offset-md-2 offset-lg-2 offset-xl-2 offset-xs-1 offset-sm-1"
           onSubmit={this.handleSubmit}
         >
+          <input
+            accept="image/*"
+            type="file"
+            id="file_avatar"
+            name="file_avatar"
+            className="form-control my-2"
+            onChange={this.previewImage}
+          />
           <input
             className="form-control my-2"
             id="first_name"

@@ -68,6 +68,7 @@ class FileEdit extends React.Component {
     data.btnUpdateFile = "submit";
     let profile = document.getElementById("file_picture");
     let fingerprint = document.getElementById("file_fingerprint");
+
     if (profile.files.length > 0) {
       this.readBase64(profile.files[0])
         .then((result) => {

@@ -30,7 +30,7 @@ class UserList extends React.Component {
     this.getRanks = this.getRanks.bind(this);
   }
   updateUsers(list) {
-    this.setState({ filteredUsers: list }, () => {
+    this.setState({ filteredUsers: list, users: list }, () => {
       this.props.onUpdate(this.state.users);
     });
   }
