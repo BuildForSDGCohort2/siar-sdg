@@ -1,6 +1,6 @@
 import React from "react";
 
-import logo from "../images/avatar.jpg";
+import avatar from "../images/avatar.jpg";
 import config from "../config.json";
 import Dashboard from "./dashboard";
 import { Spinner } from "react-bootstrap";
@@ -16,11 +16,22 @@ class UserEdit extends React.Component {
       feedback: null,
       user: props.user,
       ranks: props.ranks,
+      avatar: props.user.avatar,
+      avatarChanged: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.update = this.update.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.readBase64 = this.readBase64.bind(this);
+  }
+  readBase64(file) {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onError = (e) => reject(e);
+    });
   }
   handleCancel() {
     this.props.onClose();
@@ -58,6 +69,18 @@ class UserEdit extends React.Component {
       case "password":
         user.password = value;
         break;
+      case "file_avatar":
+        if (target.files && target.files.length > 0) {
+          // let preview = document.getElementById("avatar");
+          this.readBase64(target.files[0])
+            .then((result) => {
+              this.setState({ avatar: result, avatarChanged: true });
+              // preview.src = result;
+            })
+            .catch((e) => {
+              console.error("error: ", e);
+            });
+        }
       default:
         break;
     }
@@ -89,6 +112,7 @@ class UserEdit extends React.Component {
       station: station,
       btnUpdateUser: "update",
     };
+    if (this.state.avatarChanged) body.avatar = this.state.avatar;
     console.log("body: ", body);
     this.update(body);
   }
@@ -126,13 +150,8 @@ class UserEdit extends React.Component {
   render() {
     return (
       <div className="container-fluid">
-        <div className="row col-xs-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-10 offset-xl-1  my-5 d-flex justify-content-between">
-          {/* <button
-            className="btn btn-success col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1"
-            onClick={this.handleNewUser}
-          >
-            Edit
-          </button> */}
+        <div className="row col-xs-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-10 offset-xl-1  my-5 d-flex justify-content-between ">
+          <span></span>
           <i
             className="material-icons btn btn-danger  col-sm-2 col-xm-2 col-md-1 col-lg-1 col-xl-1"
             onClick={this.props.onClose}
@@ -143,14 +162,27 @@ class UserEdit extends React.Component {
         <div className="row col-xs-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-10 offset-xl-1  my-5 d-flex justify-content-between">
           <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
             <img
-              src={config.api_url + "/data/" + this.state.user.avatar}
+              src={
+                this.state.avatarChanged
+                  ? this.state.avatar
+                  : config.api_url + "/data/profiles/" + this.state.avatar
+              }
               className="avatar border rounded-circle"
-              alt="user avatar"
+              alt="officer picture"
             />
           </div>
 
           <div className="text-left col-md-10 col-lg-10 col-xl-10 col-sm-12 col-sx-12">
             <form onSubmit={this.handleSubmit}>
+              <label htmlFor="file_avatar">Change Picture</label>
+              <input
+                accept="image/*"
+                type="file"
+                id="file_avatar"
+                name="file_avatar"
+                className="form-control my-2"
+                onChange={this.handleChange}
+              />
               <label htmlFor="first_name">First Name</label>
               <input
                 className="my-2 form-control"
@@ -198,7 +230,7 @@ class UserEdit extends React.Component {
                 className="form-control my-2"
                 id="ranking"
                 name="ranking"
-                value={this.state.user.ranking}
+                defaultValue={this.state.user.ranking}
                 onChange={this.handleChange}
                 required
               >

@@ -1,9 +1,6 @@
 import React from "react";
 
-import logo from "../images/avatar.jpg";
 import config from "../config.json";
-import Dashboard from "./dashboard";
-import { Spinner } from "react-bootstrap";
 import UserEdit from "./user_edit";
 
 class UserDetail extends React.Component {
@@ -62,7 +59,9 @@ class UserDetail extends React.Component {
           <div className="row col-xs-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-10 offset-xl-1  my-5 d-flex justify-content-between">
             <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
               <img
-                src={config.api_url + "/data/" + this.props.user.avatar}
+                src={
+                  config.api_url + "/data/profiles/" + this.props.user.avatar
+                }
                 className="avatar border rounded-circle"
                 alt="user avatar"
               />

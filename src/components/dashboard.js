@@ -16,7 +16,7 @@ class Dashboard extends React.Component {
       isAdmin: false,
       users: [],
       files: [],
-      clickTarget: "none",
+      clickTarget: "Siar Project",
       hasFeedback: false,
       feedback: null,
       showDialog: false,
@@ -44,7 +44,7 @@ class Dashboard extends React.Component {
     });
   }
   handleFormClose() {
-    this.setState({ clickTarget: "none" });
+    this.setState({ clickTarget: "Siar Project" });
   }
   handleClick(e) {
     let id = e.target.id;
@@ -98,7 +98,6 @@ class Dashboard extends React.Component {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log("files: ", result.files);
         this.setState({ files: result.files });
       })
       .catch((e) => {
@@ -106,7 +105,6 @@ class Dashboard extends React.Component {
       });
   }
   componentDidMount() {
-    console.log("usr: ", this.state.currentUser);
     if (this.state.currentUser) {
       this.getUsers();
       this.getFiles();
@@ -126,6 +124,7 @@ class Dashboard extends React.Component {
             ) : (
               <span></span>
             )}
+            <h3>{this.state.clickTarget}</h3>
             <span
               className="btn border-white text-white"
               onClick={this.showDialog}
@@ -133,16 +132,16 @@ class Dashboard extends React.Component {
               Sign Out
             </span>
           </div>
-          {this.state.clickTarget == "none" ? (
+          {this.state.clickTarget == "Siar Project" ? (
             <>
               <div className="row col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5">
                 {this.state.isAdmin ? (
                   <div
                     className="m-4 col-md-2 col-lg-2 col-xl-2 col-sm-4 col-xs-4 btn btn-primary"
-                    id="users"
+                    id="Officers"
                     onClick={(event) => this.handleClick(event)}
                   >
-                    <i id="users" className="material-icons display-4">
+                    <i id="Officers" className="material-icons display-4">
                       local_police
                     </i>
                     <br />
@@ -151,10 +150,10 @@ class Dashboard extends React.Component {
                 ) : null}
                 <div
                   className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
-                  id="files"
+                  id="Files"
                   onClick={(event) => this.handleClick(event)}
                 >
-                  <i id="files" className="material-icons display-4">
+                  <i id="Files" className="material-icons display-4">
                     insert_drive_file
                   </i>
                   <br />
@@ -162,10 +161,10 @@ class Dashboard extends React.Component {
                 </div>
                 <div
                   className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
-                  id="reports"
+                  id="Reports"
                   onClick={(event) => this.handleClick(event)}
                 >
-                  <i id="reports" className="material-icons display-4">
+                  <i id="Reports" className="material-icons display-4">
                     assessment
                   </i>
                   <br />
@@ -173,10 +172,10 @@ class Dashboard extends React.Component {
                 </div>
                 <div
                   className="m-4 col-md-2 col-lg-2 col-xl-2  col-sm-4 col-xs-4 btn btn-primary"
-                  id="settings"
+                  id="Settings"
                   onClick={(event) => this.handleClick(event)}
                 >
-                  <i id="settings" className="material-icons display-4">
+                  <i id="Settings" className="material-icons display-4">
                     settings
                   </i>
                   <br />
@@ -184,14 +183,14 @@ class Dashboard extends React.Component {
                 </div>
               </div>
             </>
-          ) : this.state.clickTarget == "users" ? (
+          ) : this.state.clickTarget == "Officers" ? (
             <UserList
               onUpdate={(users) => this.updateUsers(users)}
               onFormClose={() => this.handleFormClose()}
               users={this.state.users}
               currentUser={this.state.currentUser}
             />
-          ) : this.state.clickTarget == "files" ? (
+          ) : this.state.clickTarget == "Files" ? (
             <FileList
               onUpdate={(files) => this.updateFiles(files)}
               onFormClose={() => this.handleFormClose()}
@@ -199,7 +198,7 @@ class Dashboard extends React.Component {
               officers={this.state.users}
               currentUser={this.state.currentUser}
             />
-          ) : this.state.clickTarget == "reports" ? (
+          ) : this.state.clickTarget == "Reports" ? (
             <Reports currentUser={this.state.currentUser} />
           ) : (
             <Settings currentUser={this.state.currentUser} />
