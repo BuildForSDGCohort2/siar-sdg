@@ -5,7 +5,7 @@ import { Alert, Spinner } from "react-bootstrap";
 import { getCityNames } from "postcodes-tz";
 import OffenseForm from "./new_offense";
 
-class PoliceStation extends React.Component {
+class PoliceStationEdit extends React.Component {
   constructor(props) {
     super(props);
 
@@ -15,44 +15,46 @@ class PoliceStation extends React.Component {
       isLoading: false,
       hasFeedback: false,
       officers: props.officers,
+      station: props.station,
+      chief: props.station.station_chief.id,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.createPoliceStation = this.createPoliceStation.bind(this);
+    this.updatePoliceStation = this.updatePoliceStation.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   handleCancel() {
-    this.props.onCancelForm(true);
+    this.props.onCancel();
   }
   handleSubmit(event) {
     event.preventDefault();
     this.setState({ isLoading: true });
-    let inputs = Array.from(event.target);
-    let region = inputs[1].options[inputs[1].options.selectedIndex].value;
-    let district = inputs[2].value;
-    let ward = inputs[3].value;
-    let street = inputs[4].value;
-    let chief = inputs[6].options[inputs[6].options.selectedIndex].value;
-    let name = inputs[7].value;
-    let phone = inputs[8].value;
-    let email = inputs[9].value;
 
-    console.log("inputs: ", inputs);
-    let data = {
-      officer_id: this.state.currentUser.id,
-      name: name,
-      station_chief: chief,
-      region: region,
-      district: district,
-      ward: ward,
-      street: street,
-      phone: phone,
-      email: email,
-      btnAddStation: "submit",
-    };
-    this.createPoliceStation(data);
+    let data = this.state.station;
+    delete data.station_chief;
+    data.station_chief = this.state.chief;
+
+    data.btnUpdateStation = "submit";
+    console.info("data: ", data);
+    this.updatePoliceStation(data);
   }
 
-  createPoliceStation(data) {
+  handleChange(e) {
+    let target = e.target;
+    let value = target.value;
+    switch (target.id) {
+      case "station_chief":
+        value = target.options[target.options.selectedIndex].value;
+        this.setState({ chief: value });
+        break;
+      case "name":
+        this.setState({ name: value });
+        break;
+      default:
+        break;
+    }
+  }
+  updatePoliceStation(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
       headers: {
@@ -96,7 +98,7 @@ class PoliceStation extends React.Component {
             {this.state.feedback}
           </Alert>
         ) : null}
-        <h3 className="my-4">Add Police Station</h3>
+        <h3 className="my-4">Update Police Station</h3>
         <form
           className="col-md-10 col-lg-10 col-xl-10 col-sm-10 col-sx-10 offset-md-1 offset-lg-1 offset-xl-1 offset-xs-1 offset-sm-1"
           onSubmit={this.handleSubmit}
@@ -105,7 +107,13 @@ class PoliceStation extends React.Component {
             <legend className="w-auto text-left ">Location</legend>
             <div className="row">
               <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12 col-sm-12 col-xs-12 py-2">
-                <select className="form-control" id="region" name="region">
+                <select
+                  className="form-control"
+                  id="region"
+                  name="region"
+                  defaultValue={this.state.station.region}
+                  onChange={this.handleChange}
+                >
                   <option>--Select Region--</option>
                   {getCityNames("asc").map((c) => {
                     return <option key={c}>{c}</option>;
@@ -119,6 +127,8 @@ class PoliceStation extends React.Component {
                   id="district"
                   name="district"
                   placeholder="District"
+                  defaultValue={this.state.station.district}
+                  onChange={this.handleChange}
                 />
               </div>
             </div>
@@ -130,6 +140,8 @@ class PoliceStation extends React.Component {
                   id="ward"
                   name="ward"
                   placeholder="Ward"
+                  defaultValue={this.state.station.ward}
+                  onChange={this.handleChange}
                 />
               </div>
               <div className="col-md-6 col-lg-6 col-xl-6 col-sm-12 col-xs-12 col-sm-12 col-xs-12 py-2">
@@ -139,6 +151,8 @@ class PoliceStation extends React.Component {
                   id="street"
                   name="street"
                   placeholder="Street"
+                  defaultValue={this.state.station.street}
+                  onChange={this.handleChange}
                 />
               </div>
             </div>
@@ -154,7 +168,8 @@ class PoliceStation extends React.Component {
                   className="form-control my-2"
                   id="station_chief"
                   name="station_chief"
-                  required
+                  defaultValue={this.state.chief}
+                  onChange={this.handleChange}
                 >
                   <option>--Select Officer--</option>
                   {this.state.officers.length > 0 ? (
@@ -185,7 +200,8 @@ class PoliceStation extends React.Component {
                   placeholder="Name of Station"
                   name="station_name"
                   type="text"
-                  required
+                  defaultValue={this.state.station.name}
+                  onChange={this.handleChange}
                 />
               </div>
             </div>
@@ -198,7 +214,7 @@ class PoliceStation extends React.Component {
                   placeholder="Phone Number"
                   name="station_phone"
                   type="number"
-                  required
+                  defaultValue={this.state.station.phone}
                 />
               </div>
               <div className="text-left col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2 col-sm-12 col-xs-12 col-sm-12 col-xs-12 py-2">
@@ -209,6 +225,8 @@ class PoliceStation extends React.Component {
                   placeholder="E-mail"
                   name="station_email"
                   type="station_email"
+                  defaultValue={this.state.station.email}
+                  onChange={this.handleChange}
                 />
               </div>
             </div>
@@ -244,4 +262,4 @@ class PoliceStation extends React.Component {
   }
 }
 
-export default PoliceStation;
+export default PoliceStationEdit;
