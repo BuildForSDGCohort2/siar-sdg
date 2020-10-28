@@ -6,6 +6,8 @@ import ReportList from "./report_list";
 import CategoryReport from "./category_report";
 import FileReportList from "./files_report_list";
 import PasswordSetting from "./password_setting";
+import PoliceStation from "./police_station_form";
+import PoliceStationList from "./police_station_list";
 
 class Settings extends React.Component {
   constructor(props) {
@@ -15,6 +17,7 @@ class Settings extends React.Component {
       isAdmin: props.currentUser.username === "admin",
       anonymousReport: [],
       files: [],
+      stations: [],
       clickTarget: "none",
       hasFeedback: false,
       feedback: null,
@@ -29,6 +32,11 @@ class Settings extends React.Component {
     this.updateFiles = this.updateFiles.bind(this);
     this.getAnonymousReports = this.getAnonymousReports.bind(this);
     this.getFilesForDpp = this.getFilesForDpp.bind(this);
+    this.getStations = this.getStations.bind(this);
+    this.updateStations = this.updateStations.bind(this);
+  }
+  updateStations(list) {
+    this.setState({ stations: list });
   }
   getFilesForDpp() {
     console.info("dpp files: ", this.state.files);
@@ -106,11 +114,35 @@ class Settings extends React.Component {
         this.setState({ hasFeedback: false, feedback: "An error occured" });
       });
   }
+  getStations() {
+    fetch(config.api_url + "/data/?stations=all", {
+      method: "get",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success === 0) {
+          let stations = response.stations;
+
+          this.setState({
+            stations: stations,
+          });
+        }
+      })
+      .catch((error) => {
+        this.setState({
+          feedback: "Cannot retrieve list of stations " + error,
+        });
+      });
+  }
   componentDidMount() {
     console.log("usr: ", this.state.currentUser);
     this.getAnonymousReports();
     this.getUsers();
     this.getFiles();
+    this.getStations();
   }
   render() {
     if (
@@ -128,12 +160,13 @@ class Settings extends React.Component {
             onClose={this.handleFormClose}
           />
         );
-      } else if (this.state.clickTarget === "category") {
+      } else if (this.state.clickTarget === "stations") {
         return (
-          <CategoryReport
-            data={this.state.files}
+          <PoliceStation
+            officers={this.state.users}
             currentUser={this.state.currentUser}
-            onClose={this.handleFormClose}
+            onCancelForm={this.handleFormClose}
+            onUpdate={(list) => this.updateStations(list)}
           />
         );
       } else if (this.state.clickTarget === "dpp") {
@@ -142,6 +175,15 @@ class Settings extends React.Component {
             data={this.state.dppFiles}
             currentUser={this.state.currentUser}
             onClose={this.handleFormClose}
+          />
+        );
+      } else if (this.state.clickTarget === "station_list") {
+        return (
+          <PoliceStationList
+            data={this.state.stations}
+            currentUser={this.state.currentUser}
+            onClose={this.handleFormClose}
+            officers={this.state.users}
           />
         );
       }
@@ -172,8 +214,8 @@ class Settings extends React.Component {
               onClick={(id) => this.handleClick(id)}
             />
             <ReportButton
-              id="ranks"
-              text="Manage Officer Ranks"
+              id="station_list"
+              text="View List of Police Stations"
               icon="stars"
               onClick={(id) => this.handleClick(id)}
             />
