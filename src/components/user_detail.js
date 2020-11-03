@@ -13,7 +13,6 @@ class UserDetail extends React.Component {
       isLoading: false,
       hasSuccessFeedback: false,
       hasFailFeedback: false,
-      feedback: null,
       showEdit: false,
     };
     this.handleEditButton = this.handleEditButton.bind(this);
@@ -30,6 +29,7 @@ class UserDetail extends React.Component {
       return (
         <UserEdit
           ranks={this.props.ranks}
+          stations={this.props.stations}
           user={this.props.user}
           onClose={this.props.onClose}
           onUpdate={(u) => this.props.onUpdate(u)}

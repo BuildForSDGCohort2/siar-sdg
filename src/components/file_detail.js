@@ -1,9 +1,6 @@
 import React from "react";
 
-import logo from "../images/avatar.jpg";
 import config from "../config.json";
-import Dashboard from "./dashboard";
-import { Spinner } from "react-bootstrap";
 import OffenseForm from "./new_offense";
 import OffenseCard from "./offense_card";
 import OffenseEdit from "./edit_offense";
@@ -19,7 +16,6 @@ class FileDetail extends React.Component {
       isLoading: false,
       hasSuccessFeedback: false,
       hasFailFeedback: false,
-      feedback: null,
       showEdit: false,
       showOffenseForm: false,
       file: props.file,

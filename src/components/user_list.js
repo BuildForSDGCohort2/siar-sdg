@@ -18,6 +18,7 @@ class UserList extends React.Component {
       closeMe: false,
       selectedUser: null,
       ranks: [],
+      stations: [],
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -28,6 +29,7 @@ class UserList extends React.Component {
     this.updateUsers = this.updateUsers.bind(this);
     this.handleCloseDetail = this.handleCloseDetail.bind(this);
     this.getRanks = this.getRanks.bind(this);
+    this.getStations = this.getStations.bind(this);
   }
   updateUsers(list) {
     this.setState({ filteredUsers: list, users: list }, () => {
@@ -100,9 +102,37 @@ class UserList extends React.Component {
         });
       });
   }
+  getStations() {
+    fetch(config.api_url + "/data/?stations=all", {
+      method: "get",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        let feedback = response.msg;
+        if (response.success == 1) {
+          this.setState({ hasFeedback: false, feedback: feedback }, () => {
+            this.props.onFeedback(feedback, this.state.hasFeedback);
+          });
+        } else {
+          this.setState({ stations: response.stations });
+        }
+      })
+      .catch((error) => {
+        console.error("error: ", error);
+        this.setState({
+          hasFailFeedback: true,
+          isLoading: false,
+          feedback: "An error occurred!",
+        });
+      });
+  }
   componentDidMount() {
     this.getRanks();
     this.setState({ selectedUser: null, filteredUsers: this.state.users });
+    this.getStations();
   }
   render() {
     return (
@@ -130,6 +160,7 @@ class UserList extends React.Component {
         {this.state.showForm ? (
           <UserForm
             ranks={this.state.ranks}
+            stations={this.state.stations}
             onFeedback={(msg, success) => this.handleFeedback(msg, success)}
             onUpdate={(list) => this.updateUsers(list)}
             currentUser={this.state.currentUser}
@@ -184,6 +215,7 @@ class UserList extends React.Component {
         ) : (
           <UserDetail
             ranks={this.state.ranks}
+            stations={this.state.stations}
             onFeedback={(msg, success) => this.handleFeedback(msg, success)}
             user={this.state.selectedUser}
             onClose={this.handleCloseDetail}
