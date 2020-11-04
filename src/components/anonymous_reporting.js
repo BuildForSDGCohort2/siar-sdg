@@ -31,6 +31,7 @@ class AnonymousReport extends React.Component {
     this.readBase64 = this.readBase64.bind(this);
     this.submitReport = this.submitReport.bind(this);
   }
+
   handleCancel() {}
   readBase64(file) {
     return new Promise((resolve, reject) => {
@@ -47,12 +48,13 @@ class AnonymousReport extends React.Component {
     let body = {
       offense: inputs[1].options[inputs[1].options.selectedIndex].value,
       description: inputs[3].value,
-      region_of_crime: inputs[5].options[inputs[5].options.selectedIndex].value,
-      district_of_crime: inputs[6].value,
-      ward_of_crime: inputs[7].value,
-      street_of_crime: inputs[8].value,
-      date_of_crime: inputs[9].value,
-      time_of_crime: inputs[10].value,
+      suspect_description: inputs[4].value,
+      region_of_crime: inputs[6].options[inputs[6].options.selectedIndex].value,
+      district_of_crime: inputs[7].value,
+      ward_of_crime: inputs[8].value,
+      street_of_crime: inputs[9].value,
+      date_of_crime: inputs[10].value,
+      time_of_crime: inputs[11].value,
       btnReportCrime: "submit",
     };
     if (inputs[2].files.length > 0) {
@@ -70,6 +72,7 @@ class AnonymousReport extends React.Component {
   submitReport(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
+      mode: "no-cors",
       headers: {
         "Content-type": "application/json",
       },
@@ -94,6 +97,9 @@ class AnonymousReport extends React.Component {
           feedback: "An error occurred!",
         });
       });
+  }
+  componentDidMount() {
+    this.checkLocation();
   }
   render() {
     return (
@@ -160,13 +166,20 @@ class AnonymousReport extends React.Component {
                 </div>
               </div>
               <div className="form-group text-left">
-                <label htmlFor="description">Description</label>
+                <label htmlFor="description">Crime Description</label>
                 <textarea
                   id="description"
                   name="textarea"
                   className="form-control"
                 ></textarea>
+                <label htmlFor="suspect_description">Suspect Description</label>
+                <textarea
+                  id="suspect_description"
+                  name="textarea"
+                  className="form-control"
+                ></textarea>
               </div>
+
               <fieldset className="border p-2 my-5">
                 <legend className="w-auto text-left small">
                   Crime Area/Location

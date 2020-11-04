@@ -2,8 +2,14 @@ import React from "react";
 
 const ReportItem = (props) => {
   const d = props.data;
+
   return (
-    <tr>
+    <tr
+      style={{ cursor: "pointer" }}
+      onClick={() => {
+        props.onClick();
+      }}
+    >
       <th scope="row">{props.position + 1}</th>
       <td className="text-left">{d.offense}</td>
       <td className="text-right">{d.date_of_crime}</td>

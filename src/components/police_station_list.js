@@ -13,7 +13,7 @@ const PoliceStationList = (props) => {
   const handleSearch = (e) => {
     e.preventDefault();
     let search = e.target.value.toLowerCase();
-    if (search == "") setFilteredList(list);
+    if (search === "") setFilteredList(list);
     else {
       let result = list.filter((item) => {
         return (

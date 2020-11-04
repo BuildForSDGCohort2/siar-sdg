@@ -29,26 +29,26 @@ class FileEdit extends React.Component {
     let el = e.target;
     var val = null;
     let file = this.state.file;
-    if (el.id == "id_type") val = el.options[el.options.selectedIndex].value;
-    if (el.id == "id_number") val = el.value;
-    if (el.id == "first_name") val = el.value;
-    if (el.id == "middle_name") val = el.value;
-    if (el.id == "last_name") val = el.value;
-    if (el.id == "phone") val = el.value;
-    if (el.id == "email") val = el.value;
-    if (el.id == "gender") val = el.options[el.options.selectedIndex].value;
-    if (el.id == "ethnicity") val = el.value;
-    if (el.id == "region_of_birth")
+    if (el.id === "id_type") val = el.options[el.options.selectedIndex].value;
+    if (el.id === "id_number") val = el.value;
+    if (el.id === "first_name") val = el.value;
+    if (el.id === "middle_name") val = el.value;
+    if (el.id === "last_name") val = el.value;
+    if (el.id === "phone") val = el.value;
+    if (el.id === "email") val = el.value;
+    if (el.id === "gender") val = el.options[el.options.selectedIndex].value;
+    if (el.id === "ethnicity") val = el.value;
+    if (el.id === "region_of_birth")
       val = el.options[el.options.selectedIndex].value;
-    if (el.id == "district_of_birth") val = el.value;
-    if (el.id == "ward_of_birth") val = el.value;
-    if (el.id == "street_of_birth") val = el.value;
-    if (el.id == "region_of_residence")
+    if (el.id === "district_of_birth") val = el.value;
+    if (el.id === "ward_of_birth") val = el.value;
+    if (el.id === "street_of_birth") val = el.value;
+    if (el.id === "region_of_residence")
       val = el.options[el.options.selectedIndex].value;
-    if (el.id == "district_of_residence") val = el.value;
-    if (el.id == "ward_of_residence") val = el.value;
-    if (el.id == "street_of_residence") val = el.value;
-    if (el.id == "dob") val = el.value;
+    if (el.id === "district_of_residence") val = el.value;
+    if (el.id === "ward_of_residence") val = el.value;
+    if (el.id === "street_of_residence") val = el.value;
+    if (el.id === "dob") val = el.value;
 
     file[el.id] = val;
     this.setState({ file: file });

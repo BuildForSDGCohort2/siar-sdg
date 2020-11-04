@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import AnonymousDetail from "./anonymous_detail";
 import ReportItem from "./report_list_item";
 
 const ReportList = (props) => {
   const [filteredList, setFilteredList] = useState(props.data);
   const [list, setList] = useState(props.data);
+  const [detail, setDetail] = useState(null);
+
   const handleSearch = (e) => {
     e.preventDefault();
     let search = e.target.value.toLowerCase();
@@ -24,9 +27,13 @@ const ReportList = (props) => {
   const handleClose = () => {
     props.onClose();
   };
+  if (detail != null) {
+    return <AnonymousDetail item={detail} />;
+  }
   return (
     <>
       <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 offset-md-1 offset-lg-1 offset-xl-1 my-5 d-flex justify-content-between">
+        <span></span>
         <i
           className="material-icons btn btn-danger  col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1"
           onClick={handleClose}
@@ -59,7 +66,16 @@ const ReportList = (props) => {
           <tbody>
             {filteredList.length > 0 ? (
               filteredList.map((u, i) => {
-                return <ReportItem data={u} key={u.id} position={i} />;
+                return (
+                  <ReportItem
+                    data={u}
+                    key={u.id}
+                    position={i}
+                    onClick={() => {
+                      setDetail(u);
+                    }}
+                  />
+                );
               })
             ) : (
               <tr>

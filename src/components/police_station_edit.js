@@ -173,18 +173,22 @@ class PoliceStationEdit extends React.Component {
                 >
                   <option>--Select Officer--</option>
                   {this.state.officers.length > 0 ? (
-                    this.state.officers.map((o) => {
-                      return (
-                        <option key={o.id} value={o.id}>
-                          {o.first_name +
-                            " " +
-                            o.last_name +
-                            " (" +
-                            o.username +
-                            ")"}
-                        </option>
-                      );
-                    })
+                    this.state.officers
+                      .filter((off) => {
+                        return off.station == this.state.station.id;
+                      })
+                      .map((o) => {
+                        return (
+                          <option key={o.id} value={o.id}>
+                            {o.first_name +
+                              " " +
+                              o.last_name +
+                              " (" +
+                              o.username +
+                              ")"}
+                          </option>
+                        );
+                      })
                   ) : (
                     <option>No officers available</option>
                   )}

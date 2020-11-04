@@ -17,6 +17,7 @@ class UserForm extends React.Component {
       hasFailFeedback: false,
       feedback: null,
       ranks: props.ranks,
+      stations: props.stations,
       avatar: avatar,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -62,7 +63,8 @@ class UserForm extends React.Component {
     let email = document.getElementById("email").value;
     let el = document.getElementById("ranking");
     let ranking = el.options[el.options.selectedIndex].value;
-    let station = document.getElementById("station").value;
+    let stationEl = document.getElementById("station");
+    let station = stationEl.options[stationEl.options.selectedIndex].value;
     let body = {
       username: username,
       password: password,
@@ -212,14 +214,27 @@ class UserForm extends React.Component {
               )}
             </select>
           </div>
-          <input
-            className="form-control my-2"
-            id="station"
-            placeholder="Duty Station"
-            name="station"
-            type="text"
-            required
-          />
+          <div className="text-left">
+            <label htmlFor="station">Select Duty Station</label>
+            <select
+              className="form-control my-2"
+              id="station"
+              name="station"
+              required
+            >
+              {this.state.stations.length > 0 ? (
+                this.state.stations.map((r) => {
+                  return (
+                    <option key={r.id} value={r.id}>
+                      {r.name + " (" + r.region + ")"}
+                    </option>
+                  );
+                })
+              ) : (
+                <option value="not station">Stations not available</option>
+              )}
+            </select>
+          </div>
           <input
             className="form-control my-2"
             id="password"

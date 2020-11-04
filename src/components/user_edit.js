@@ -16,6 +16,7 @@ class UserEdit extends React.Component {
       feedback: null,
       user: props.user,
       ranks: props.ranks,
+      stations: props.stations,
       avatar: props.user.avatar,
       avatarChanged: false,
     };
@@ -97,7 +98,8 @@ class UserEdit extends React.Component {
     let last_name = document.getElementById("last_name").value;
     let phone = document.getElementById("phone").value;
     let email = document.getElementById("email").value;
-    let station = document.getElementById("station").value;
+    let stationEl = document.getElementById("station");
+    let station = stationEl.options[stationEl.options.selectedIndex].value;
     // let password = document.getElementById("password").value;
     let body = {
       id: this.props.user.id,
@@ -247,16 +249,25 @@ class UserEdit extends React.Component {
                 )}
               </select>
               <label htmlFor="station">Duty Station</label>
-              <input
+              <select
                 className="form-control my-2"
                 id="station"
-                placeholder="Duty Station"
                 name="station"
-                type="text"
-                value={this.state.user.station}
-                onChange={this.handleChange}
+                defaultValue={this.state.user.station}
                 required
-              />
+              >
+                {this.state.stations.length > 0 ? (
+                  this.state.stations.map((r) => {
+                    return (
+                      <option key={r.id} value={r.id}>
+                        {r.name + " (" + r.region + ")"}
+                      </option>
+                    );
+                  })
+                ) : (
+                  <option value="not station">Stations not available</option>
+                )}
+              </select>
               <label htmlFor="username">Officer ID</label>
               <input
                 className="my-2 form-control"

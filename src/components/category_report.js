@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   VictoryBar,
   VictoryChart,
@@ -97,7 +97,7 @@ class CategoryReport extends React.Component {
           {this.state.filter.charAt(0).toUpperCase() +
             this.state.filter.slice(1).replace(/_/g, " ")}
         </h2>
-        <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2 my-5 d-flex justify-content-between">
+        <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 offset-md-3 offset-lg-3 offset-xl-3 my-2 d-flex justify-content-between">
           <VictoryChart domainPadding={20} theme={VictoryTheme.material}>
             <VictoryAxis
               label={
