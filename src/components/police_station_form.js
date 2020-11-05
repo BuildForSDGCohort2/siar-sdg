@@ -55,6 +55,7 @@ class PoliceStation extends React.Component {
   createPoliceStation(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
+      mode: "no-cors",
       headers: {
         "Content-type": "application/json",
       },

@@ -60,6 +60,7 @@ class Dashboard extends React.Component {
   getUsers() {
     fetch(config.api_url + "/data/?user=all", {
       method: "get",
+
       headers: {
         "Content-type": "application/json",
       },
@@ -94,6 +95,7 @@ class Dashboard extends React.Component {
   getFiles() {
     fetch(config.api_url + "/data/?files=all", {
       method: "get",
+
       headers: { "content-type": "application/json" },
     })
       .then((res) => res.json())

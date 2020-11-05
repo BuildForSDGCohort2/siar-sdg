@@ -121,6 +121,7 @@ class UserEdit extends React.Component {
   update(user) {
     fetch(config.api_url + "/auth/", {
       method: "put",
+      mode: "no-cors",
       headers: {
         "Content-type": "application/json",
       },

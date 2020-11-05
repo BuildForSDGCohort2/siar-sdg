@@ -5,6 +5,7 @@ const ReportItem = (props) => {
 
   return (
     <tr
+      className={d.is_read == 0 ? "bg-secondary" : ""}
       style={{ cursor: "pointer" }}
       onClick={() => {
         props.onClick();

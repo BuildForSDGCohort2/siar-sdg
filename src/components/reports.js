@@ -56,6 +56,7 @@ class Reports extends React.Component {
   getUsers() {
     fetch(config.api_url + "/data/?user=all", {
       method: "get",
+
       headers: {
         "Content-type": "application/json",
       },
@@ -89,6 +90,7 @@ class Reports extends React.Component {
   getFiles() {
     fetch(config.api_url + "/data/?offenses=all", {
       method: "get",
+
       headers: { "content-type": "application/json" },
     })
       .then((res) => res.json())
@@ -104,6 +106,7 @@ class Reports extends React.Component {
   getAnonymousReports() {
     fetch(config.api_url + "/data/?reports=anonymous", {
       method: "get",
+
       headers: { "Content-type": "application/json" },
     })
       .then((res) => res.json())
