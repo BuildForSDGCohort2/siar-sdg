@@ -22,7 +22,6 @@ class PasswordSetting extends React.Component {
   savePassword(body) {
     fetch(config.api_url + "/auth/", {
       method: "post",
-      mode: "no-cors",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(body),
     })

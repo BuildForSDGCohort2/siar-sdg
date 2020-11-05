@@ -7,6 +7,11 @@ const ReportList = (props) => {
   const [list, setList] = useState(props.data);
   const [detail, setDetail] = useState(null);
 
+  const updateReports = (list) => {
+    setList(list);
+    setFilteredList(list);
+    props.onUpdateReports(list);
+  };
   const handleSearch = (e) => {
     e.preventDefault();
     let search = e.target.value.toLowerCase();
@@ -28,7 +33,7 @@ const ReportList = (props) => {
     props.onClose();
   };
   if (detail != null) {
-    return <AnonymousDetail item={detail} />;
+    return <AnonymousDetail item={detail} onUpdateReports={updateReports} />;
   }
   return (
     <>

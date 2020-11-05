@@ -66,7 +66,6 @@ class Settings extends React.Component {
   getUsers() {
     fetch(config.api_url + "/data/?user=all", {
       method: "get",
-      mode: "no-cors",
       headers: {
         "Content-type": "application/json",
       },
@@ -88,7 +87,7 @@ class Settings extends React.Component {
   getFiles() {
     fetch(config.api_url + "/data/?offenses=all", {
       method: "get",
-      mode: "no-cors",
+
       headers: { "content-type": "application/json" },
     })
       .then((res) => res.json())
@@ -104,7 +103,6 @@ class Settings extends React.Component {
   getAnonymousReports() {
     fetch(config.api_url + "/data/?reports=anonymous", {
       method: "get",
-      mode: "no-cors",
       headers: { "Content-type": "application/json" },
     })
       .then((res) => res.json())
@@ -120,7 +118,6 @@ class Settings extends React.Component {
   getStations() {
     fetch(config.api_url + "/data/?stations=all", {
       method: "get",
-      mode: "no-cors",
       headers: {
         "Content-type": "application/json",
       },

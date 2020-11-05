@@ -31,7 +31,6 @@ class LoginForm extends React.Component {
   signin(body) {
     fetch(config.api_url + "/auth/index.php", {
       method: "post",
-      // mode: "no-cors",
       headers: {
         "Content-type": "application/json",
       },

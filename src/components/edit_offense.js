@@ -81,7 +81,7 @@ class OffenseEdit extends React.Component {
   updateOffense(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
-      mode: "no-cors",
+
       headers: {
         "Content-type": "application/json",
       },

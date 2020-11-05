@@ -12,9 +12,9 @@ class Reports extends React.Component {
     this.state = {
       currentUser: props.currentUser,
       isAdmin: false,
-      anonymousReport: [],
+      anonymousReport: props.reports,
       files: [],
-      clickTarget: "none",
+      clickTarget: props.target,
       hasFeedback: false,
       feedback: null,
       dppFiles: [],
@@ -27,6 +27,11 @@ class Reports extends React.Component {
     this.updateFiles = this.updateFiles.bind(this);
     this.getAnonymousReports = this.getAnonymousReports.bind(this);
     this.getFilesForDpp = this.getFilesForDpp.bind(this);
+    this.updateReports = this.updateReports.bind(this);
+  }
+  updateReports(list) {
+    this.setState({ anonymousReport: list });
+    this.props.onUpdateReports(list);
   }
   getFilesForDpp() {
     console.info("dpp files: ", this.state.files);
@@ -138,6 +143,7 @@ class Reports extends React.Component {
             data={this.state.anonymousReport}
             currentUser={this.state.currentUser}
             onClose={this.handleFormClose}
+            onUpdateReports={(l) => this.updateReports(l)}
           />
         );
       } else if (this.state.clickTarget === "category") {
