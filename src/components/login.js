@@ -23,20 +23,23 @@ class LoginForm extends React.Component {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
     let body = { username: username, password: password, btnLogin: "login" };
-    console.log("body: ", body);
+
     this.setState({ isLoading: true });
     this.signin(body);
     // this.setState({ authenticated: false, user: body }, () => {});
   }
   signin(body) {
-    fetch(config.api_url + "/auth/", {
+    fetch(config.api_url + "/auth/index.php", {
       method: "post",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify(body),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        // consol.log("res: ", res);
+        return res.json();
+      })
       .then((response) => {
         console.log("response: ", response);
         if (response.success == 0) {

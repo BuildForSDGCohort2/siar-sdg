@@ -115,6 +115,7 @@ class FileEdit extends React.Component {
   updateFile(data) {
     fetch(config.api_url + "/auth/", {
       method: "post",
+
       headers: {
         "Content-type": "application/json",
       },

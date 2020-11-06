@@ -85,6 +85,7 @@ class UserForm extends React.Component {
   signup(user) {
     fetch(config.api_url + "/auth/", {
       method: "post",
+
       headers: {
         "Content-type": "application/json",
       },

@@ -3,7 +3,7 @@ import UserList from "./user_list";
 import LoginForm from "./login";
 import config from "../config.json";
 import FileList from "./file_list";
-import ReportButton from "./report_button";
+import { Badge } from "react-bootstrap";
 import Reports from "./reports";
 import Dialog from "./modal_dialog";
 import Settings from "./settings";
@@ -21,6 +21,9 @@ class Dashboard extends React.Component {
       feedback: null,
       showDialog: false,
       isHome: true,
+      newReports: [],
+      reportTarget: "none",
+      reportCount: 0,
     };
     this.handleSignout = this.handleSignout.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -30,6 +33,22 @@ class Dashboard extends React.Component {
     this.updateFiles = this.updateFiles.bind(this);
     this.showDialog = this.showDialog.bind(this);
     this.handleHomeClick = this.handleHomeClick.bind(this);
+    this.getUnreadReports = this.getUnreadReports.bind(this);
+    this.handleNotificationClick = this.handleNotificationClick.bind(this);
+    this.updateReports = this.updateReports.bind(this);
+  }
+  updateReports(list) {
+    let unread = list.filter((r) => {
+      return r.is_read == 0;
+    });
+    this.setState({ newReports: list, reportCount: unread.length });
+  }
+  handleNotificationClick() {
+    this.setState({
+      clickTarget: "Reports",
+      isHome: false,
+      reportTarget: "anonymous",
+    });
   }
   handleHomeClick() {
     this.handleFormClose();
@@ -60,6 +79,7 @@ class Dashboard extends React.Component {
   getUsers() {
     fetch(config.api_url + "/data/?user=all", {
       method: "get",
+
       headers: {
         "Content-type": "application/json",
       },
@@ -94,6 +114,7 @@ class Dashboard extends React.Component {
   getFiles() {
     fetch(config.api_url + "/data/?files=all", {
       method: "get",
+
       headers: { "content-type": "application/json" },
     })
       .then((res) => res.json())
@@ -104,10 +125,31 @@ class Dashboard extends React.Component {
         console.log("error: ", e);
       });
   }
+  getUnreadReports() {
+    fetch(config.api_url + "/data/?reports=anonymous", {
+      method: "get",
+      headers: { "content-type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        let unread = result.crimes.filter((r) => {
+          console.log("cr: ", r.is_read);
+          return r.is_read === "0";
+        });
+        this.setState({
+          newReports: result.crimes,
+          reportCount: unread.length,
+        });
+      })
+      .catch((e) => {
+        console.log("error: ", e);
+      });
+  }
   componentDidMount() {
     if (this.state.currentUser) {
       this.getUsers();
       this.getFiles();
+      this.getUnreadReports();
     }
   }
   render() {
@@ -122,7 +164,22 @@ class Dashboard extends React.Component {
                 <i className="material-icons text-white display-4">dashboard</i>
               </span>
             ) : (
-              <span></span>
+              <span className=" notification-badge d-flex justify-content-center align-items-start">
+                {this.state.reportCount > 0 ? (
+                  <>
+                    <i
+                      className="material-icons"
+                      onClick={this.handleNotificationClick}
+                    >
+                      notifications
+                    </i>
+
+                    <Badge pill variant="danger" className="badge">
+                      {this.state.reportCount}
+                    </Badge>
+                  </>
+                ) : null}{" "}
+              </span>
             )}
             <h3>{this.state.clickTarget}</h3>
             <span
@@ -166,7 +223,7 @@ class Dashboard extends React.Component {
                 >
                   <i id="Reports" className="material-icons display-4">
                     assessment
-                  </i>
+                  </i>{" "}
                   <br />
                   <span className="dispaly-4">Reports</span>
                 </div>
@@ -199,7 +256,14 @@ class Dashboard extends React.Component {
               currentUser={this.state.currentUser}
             />
           ) : this.state.clickTarget == "Reports" ? (
-            <Reports currentUser={this.state.currentUser} />
+            <Reports
+              currentUser={this.state.currentUser}
+              target={this.state.reportTarget}
+              reports={this.state.newReports}
+              onUpdateReports={(l) => {
+                this.updateReports(l);
+              }}
+            />
           ) : (
             <Settings currentUser={this.state.currentUser} />
           )}

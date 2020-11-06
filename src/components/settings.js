@@ -87,6 +87,7 @@ class Settings extends React.Component {
   getFiles() {
     fetch(config.api_url + "/data/?offenses=all", {
       method: "get",
+
       headers: { "content-type": "application/json" },
     })
       .then((res) => res.json())

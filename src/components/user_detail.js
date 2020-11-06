@@ -15,6 +15,14 @@ class UserDetail extends React.Component {
       hasFailFeedback: false,
       showEdit: false,
     };
+    this.bgStyle = {
+      backgroundImage:
+        "url(" +
+        config.api_url +
+        "/data/profiles/" +
+        this.props.user.avatar +
+        ")",
+    };
     this.handleEditButton = this.handleEditButton.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
   }
@@ -58,10 +66,8 @@ class UserDetail extends React.Component {
           </div>
           <div className="row col-xs-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-10 offset-xl-1  my-5 d-flex justify-content-between">
             <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
-              <img
-                src={
-                  config.api_url + "/data/profiles/" + this.props.user.avatar
-                }
+              <div
+                style={this.bgStyle}
                 className="avatar border rounded-circle"
                 alt="user avatar"
               />

@@ -5,6 +5,7 @@ const ReportItem = (props) => {
 
   return (
     <tr
+      className={d.is_read == 0 ? "font-weight-bold" : ""}
       style={{ cursor: "pointer" }}
       onClick={() => {
         props.onClick();
